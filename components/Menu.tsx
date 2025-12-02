@@ -19,21 +19,27 @@ export default function Menu({ lang }: { lang: string }) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-   const fetchNavigation = async () => {
-     try {
-       const data = await directusFetch("items/navigation_items", {
-         "filter[published][_eq]": "true",
-         "sort[]": "sort"
-       });
-       setNavigationItems(data.data);
-     } catch (err) {
-       console.error("Failed loading navigation:", err);
-       setError("Failed to load navigation");
-     }
-   };
+  const fetchNavigation = async () => {
+    try {
+      const data = await directusFetch("items/navigation_items", {
+        "filter[language_code][_eq]": lang,
+        "filter[published][_eq]": "true",
+        "fields":
+          "id,title,slug,url,parent_id,language_code,sort",
+        "sort[]": "sort",
+      });
+
+      const items = data.data;            // raw flat items from Directus
+      const tree = buildTree(items);      // your existing helper
+      setNavigation(tree);                // same state as before
+      setError(null);
+    } catch (err) {
+      console.error("Failed loading navigation:", err);
+      setError("Navigation could not be loaded.");
+    }
+  };
 
   fetchNavigation();
-
   }, [lang]);
 
   const buildTree = (items: NavigationItem[]): NavigationItem[] => {

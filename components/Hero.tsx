@@ -1,4 +1,5 @@
 // components/Hero.tsx
+import { directusFetch } from "../lib/directus"; // adjust path if needed
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
@@ -15,13 +16,19 @@ export default function Hero() {
   useEffect(() => {
     const fetchHero = async () => {
       try {
-        const res = await axios.get('http://localhost:8055/items/hero_section');
-        setHero(res.data.data);
+        const data = await directusFetch<any>('items/hero_section', {
+          fields: ['title', 'subtitle', 'background_image.id'],
+        });
+
+        // singleton: data.data is an array or a single object depending on how we created it
+        const record = Array.isArray(data.data) ? data.data[0] : data.data;
+        setHero(record || null);
       } catch (err) {
-        console.error(err);
+        console.error('Failed loading hero section:', err);
         setError('Failed to load hero section');
       }
     };
+
     fetchHero();
   }, []);
 

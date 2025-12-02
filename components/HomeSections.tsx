@@ -1,3 +1,4 @@
+import { directusFetch } from "../lib/directus"; // adjust path if needed
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import SectionContainer from './layout/SectionContainer';
@@ -14,8 +15,6 @@ interface HomeSection {
 export default function HomeSections() {
   const [sections, setSections] = useState<HomeSection[]>([]);
   const [error, setError] = useState<string | null>(null);
-
-  import { directusFetch } from "../lib/directus"; // adjust path if needed
 
   useEffect(() => {
   const fetchSections = async () => {

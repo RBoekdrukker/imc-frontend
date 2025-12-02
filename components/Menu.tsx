@@ -1,4 +1,5 @@
 // components/Menu.tsx
+import { directusFetch } from "../lib/directus";
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -18,26 +19,21 @@ export default function Menu({ lang }: { lang: string }) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchNavigation = async () => {
-      try {
-        const response = await axios.get('http://localhost:8055/items/navigation_items', {
-          params: {
-            filter: { language_code: { _eq: lang } },
-            fields: 'id,title,slug,url,parent_id,language_code',
-            sort: 'sort'
-          }
-        });
+   const fetchNavigation = async () => {
+     try {
+       const data = await directusFetch("items/navigation_items", {
+         "filter[published][_eq]": "true",
+         "sort[]": "sort"
+       });
+       setNavigationItems(data.data);
+     } catch (err) {
+       console.error("Failed loading navigation:", err);
+       setError("Failed to load navigation");
+     }
+   };
 
-        const items = response.data.data;
-        const tree = buildTree(items);
-        setNavigation(tree);
-      } catch (err) {
-        console.error('Navigation error:', err);
-        setError('Navigation could not be loaded.');
-      }
-    };
+  fetchNavigation();
 
-    fetchNavigation();
   }, [lang]);
 
   const buildTree = (items: NavigationItem[]): NavigationItem[] => {

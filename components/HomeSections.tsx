@@ -15,23 +15,23 @@ export default function HomeSections() {
   const [sections, setSections] = useState<HomeSection[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchSections = async () => {
-      try {
-        const res = await axios.get('http://localhost:8055/items/home_sections', {
-          params: {
-            fields: 'id,title,body,background_image.id',
-            filter: { published: { _eq: true } }
-          }
-        });
-        setSections(res.data.data);
-      } catch (err) {
-        console.error(err);
-        setError('Failed to load sections');
-      }
-    };
+  import { directusFetch } from "../lib/directus"; // adjust path if needed
 
-    fetchSections();
+  useEffect(() => {
+  const fetchSections = async () => {
+    try {
+      const data = await directusFetch("items/home_sections", {
+        "fields": "id,title,body,background_image.id",
+        "filter[published][_eq]": "true"
+      });
+      setSections(data.data);
+    } catch (err) {
+      console.error("Failed loading home sections:", err);
+    }
+  };
+
+  fetchSections();
+
   }, []);
 
   return (

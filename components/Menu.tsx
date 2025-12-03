@@ -1,15 +1,14 @@
 // components/Menu.tsx
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { directusFetch } from "../lib/directus";
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
 
 interface NavigationItem {
   id: number;
   title: string;
   slug?: string;
   url?: string;
-  parent_id?: number;
+  parent_id?: number | null;
   language_code: string;
   children?: NavigationItem[];
 }
@@ -19,38 +18,39 @@ export default function Menu({ lang }: { lang: string }) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-  const fetchNavigation = async () => {
-    try {
-      const data = await directusFetch("items/navigation_items", {
-        "filter[language_code][_eq]": lang,
-        "filter[published][_eq]": "true",
-        "fields":
-          "id,title,slug,url,parent_id,language_code,sort",
-        "sort[]": "sort",
-      });
+    const fetchNavigation = async () => {
+      try {
+        const data = await directusFetch("items/navigation_items", {
+          "filter[language_code][_eq]": lang,
+          "filter[published][_eq]": "true",
+          fields: "id,title,slug,url,parent_id,language_code,sort",
+          "sort[]": "sort",
+        });
 
-      const items = data.data;            // raw flat items from Directus
-      const tree = buildTree(items);      // your existing helper
-      setNavigation(tree);                // same state as before
-      setError(null);
-    } catch (err) {
-      console.error("Failed loading navigation:", err);
-      setError("Navigation could not be loaded.");
-    }
-  };
+        const items: NavigationItem[] = data.data;
+        const tree = buildTree(items);
+        setNavigation(tree);
+        setError(null);
+      } catch (err) {
+        console.error("Failed loading navigation:", err);
+        setError("Navigation could not be loaded.");
+      }
+    };
 
-  fetchNavigation();
+    fetchNavigation();
   }, [lang]);
 
   const buildTree = (items: NavigationItem[]): NavigationItem[] => {
     const map: Record<number, NavigationItem> = {};
     const roots: NavigationItem[] = [];
 
-    items.forEach(item => {
+    // clone items and prepare children arrays
+    items.forEach((item) => {
       map[item.id] = { ...item, children: [] };
     });
 
-    items.forEach(item => {
+    // assign children to parents or promote to roots
+    items.forEach((item) => {
       if (item.parent_id && map[item.parent_id]) {
         map[item.parent_id].children!.push(map[item.id]);
       } else {
@@ -71,9 +71,10 @@ export default function Menu({ lang }: { lang: string }) {
             {item.title}
           </span>
         </Link>
+
         {item.children && item.children.length > 0 && (
-          <ul className="absolute left-0 -mt-1 bg-white text-gray-800 shadow-lg rounded-md opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all z-50">
-            {item.children.map(child => (
+          <ul className="absolute left-0 -mt-1 bg-white text-gray-800 shadow-lg rounded-md opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity">
+            {item.children.map((child) => (
               <li key={child.id}>
                 <Link href={child.url ?? `/${child.language_code}/${child.slug}`}>
                   <span className="px-4 py-2 block hover:bg-nicepage-primary hover:text-brand-menu cursor-pointer transition">
@@ -90,15 +91,15 @@ export default function Menu({ lang }: { lang: string }) {
 
   return (
     <nav className="bg-brand-menu text-nicepage-primary font-medium shadow">
-  <div className="max-w-max mx-auto px-4 sm:px-6 lg:px-8">
-    <ul className="flex space-x-4 py-3">
-      {error ? (
-        <li className="text-red-500">{error}</li>
-      ) : (
-        navigation.map(renderItem)
-      )}
-    </ul>
-  </div>
-</nav>
+      <div className="max-w-max mx-auto px-4 sm:px-6 lg:px-8">
+        <ul className="flex space-x-4 py-3">
+          {error ? (
+            <li className="text-red-500">{error}</li>
+          ) : (
+            navigation.map(renderItem)
+          )}
+        </ul>
+      </div>
+    </nav>
   );
 }

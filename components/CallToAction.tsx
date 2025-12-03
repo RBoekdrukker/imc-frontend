@@ -17,7 +17,6 @@ export default function CallToAction() {
     const fetchCta = async () => {
       try {
         const data = await directusFetch("items/cta_section", {
-          // singleton CTA with basic fields
           fields: "title,subtitle,button_label,button_url",
         });
 
@@ -42,6 +41,7 @@ export default function CallToAction() {
   return (
     <section className="py-16 px-6 bg-slate-100 text-center">
       <h2 className="text-3xl font-bold mb-4">{cta.title}</h2>
+
       {cta.subtitle && (
         <p className="text-lg mb-6 max-w-2xl mx-auto">{cta.subtitle}</p>
       )}

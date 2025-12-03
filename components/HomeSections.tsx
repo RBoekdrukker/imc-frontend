@@ -1,6 +1,7 @@
-import { directusFetch } from "../lib/directus"; // adjust path if needed
+// HomeSections.tsx
+
+import { directusFetch } from "../lib/directus"; 
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import SectionContainer from './layout/SectionContainer';
 
 interface HomeSection {
@@ -17,20 +18,21 @@ export default function HomeSections() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-  const fetchSections = async () => {
-    try {
-      const data = await directusFetch("items/home_sections", {
-        "fields": "id,title,body,background_image.id",
-        "filter[published][_eq]": "true"
-      });
-      setSections(data.data);
-    } catch (err) {
-      console.error("Failed loading home sections:", err);
-    }
-  };
+    const fetchSections = async () => {
+      try {
+        const res = await directusFetch("items/home_sections", {
+          fields: "id,title,body,background_image.id",
+          "filter[published][_eq]": "true",
+        });
 
-  fetchSections();
+        setSections(res.data);
+      } catch (err) {
+        console.error("Failed loading home sections:", err);
+        setError("Unable to load homepage sections");
+      }
+    };
 
+    fetchSections();
   }, []);
 
   return (
@@ -39,10 +41,11 @@ export default function HomeSections() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {sections.map((section) => (
           <div key={section.id} className="bg-white border border-brand-primary shadow-lg rounded-2xl overflow-hidden">
+
             {/* Background Image Banner */}
             {section.background_image && (
               <img
-                src={`http://localhost:8055/assets/${section.background_image.id}`}
+                src={`${process.env.NEXT_PUBLIC_DIRECTUS_URL}/assets/${section.background_image.id}`}
                 alt={section.title}
                 className="w-full h-32 object-cover"
               />
@@ -51,8 +54,9 @@ export default function HomeSections() {
             {/* Text Content */}
             <div className="p-6">
               <h3 className="text-2xl font-bold text-center text-gray-800 mb-2 leading-snug min-h-[3.5rem]">
-				{section.title}
-			</h3>
+                {section.title}
+              </h3>
+
               <div
                 className="text-gray-700 text-center text-sm leading-relaxed prose max-w-none"
                 dangerouslySetInnerHTML={{ __html: section.body }}

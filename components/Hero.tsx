@@ -20,11 +20,9 @@ export default function Hero() {
     const fetchHero = async () => {
       try {
         const data = await directusFetch("items/hero_section", {
-          // singleton collection – one record with these fields
           fields: "title,subtitle,background_image.id",
         });
 
-        // For singletons, Directus returns { data: { ... } }
         const record = data?.data ?? null;
         setHero(record);
         setError(null);
@@ -53,12 +51,10 @@ export default function Hero() {
     <section
       className="text-white py-32 px-6 text-center"
       style={{
-        backgroundImage: backgroundImageUrl
-          ? `url(${backgroundImageUrl})`
-          : undefined,
+        backgroundImage: backgroundImageUrl ? `url(${backgroundImageUrl})` : undefined,
         backgroundSize: "cover",
         backgroundPosition: "center",
-        backgroundColor: "#254463", // fallback
+        backgroundColor: "#254463",
       }}
     >
       <h1 className="text-5xl font-bold mb-6">{hero.title}</h1>

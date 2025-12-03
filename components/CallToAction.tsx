@@ -5,7 +5,7 @@ import { directusFetch } from "../lib/directus";
 interface CtaData {
   title: string;
   subtitle?: string;
-  button_label?: string;
+  button_text?: string;   // <-- was button_label
   button_url?: string;
 }
 
@@ -17,7 +17,8 @@ export default function CallToAction() {
     const fetchCta = async () => {
       try {
         const data = await directusFetch("items/cta_section", {
-          fields: "title,subtitle,button_label,button_url",
+          // IMPORTANT: use button_text, not button_label
+          fields: "title,subtitle,button_text,button_url",
         });
 
         const record = data?.data ?? null;
@@ -46,12 +47,12 @@ export default function CallToAction() {
         <p className="text-lg mb-6 max-w-2xl mx-auto">{cta.subtitle}</p>
       )}
 
-      {cta.button_label && cta.button_url && (
+      {cta.button_text && cta.button_url && (
         <a
           href={cta.button_url}
           className="inline-block px-6 py-3 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
         >
-          {cta.button_label}
+          {cta.button_text}
         </a>
       )}
     </section>

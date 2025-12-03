@@ -1,13 +1,12 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import Link from 'next/link';
-import SectionContainer from './layout/SectionContainer';
+// components/CallToAction.tsx
+import { useEffect, useState } from "react";
+import { directusFetch } from "../lib/directus";
 
 interface CtaData {
   title: string;
-  subtitle: string;
-  button_text: string;
-  button_url: string;
+  subtitle?: string;
+  button_label?: string;
+  button_url?: string;
 }
 
 export default function CallToAction() {
@@ -17,31 +16,44 @@ export default function CallToAction() {
   useEffect(() => {
     const fetchCta = async () => {
       try {
-        const res = await axios.get('http://localhost:8055/items/cta_section');
-        setCta(res.data.data);
+        const data = await directusFetch("items/cta_section", {
+          // singleton CTA with basic fields
+          fields: "title,subtitle,button_label,button_url",
+        });
+
+        const record = data?.data ?? null;
+        setCta(record);
+        setError(null);
       } catch (err) {
-        console.error(err);
-        setError('Failed to load call to action');
+        console.error("Failed loading call to action:", err);
+        setError("Failed to load call to action");
       }
     };
 
     fetchCta();
   }, []);
 
-  if (error) return <div className="text-red-600">{error}</div>;
+  if (error) {
+    return <div className="text-red-600 text-center mt-4">{error}</div>;
+  }
+
   if (!cta) return null;
 
   return (
-    <SectionContainer background="bg-gray-4 text-center text-white">
+    <section className="py-16 px-6 bg-slate-100 text-center">
       <h2 className="text-3xl font-bold mb-4">{cta.title}</h2>
-      <p className="text-lg mb-8">{cta.subtitle}</p>
-      <Link
-		href={cta.button_url || '#'}
-		className="bg-brand-menu text-nicepage-primary font-semibold px-6 py-3 rounded-full hover:bg-gray-100 transition"
-		>
-  {cta.button_text}
-</Link>
+      {cta.subtitle && (
+        <p className="text-lg mb-6 max-w-2xl mx-auto">{cta.subtitle}</p>
+      )}
 
-    </SectionContainer>
+      {cta.button_label && cta.button_url && (
+        <a
+          href={cta.button_url}
+          className="inline-block px-6 py-3 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
+        >
+          {cta.button_label}
+        </a>
+      )}
+    </section>
   );
 }

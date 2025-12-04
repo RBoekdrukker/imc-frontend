@@ -8,7 +8,7 @@ interface ContentBlock {
   subtitle?: string | null;
   type: string; // "image" | "quote" | etc.
   image_file?: { id: string } | string | null;
-  details?: string | null;
+  details?: string | null;             // can contain HTML
 }
 
 interface ContentBlocksProps {
@@ -111,21 +111,17 @@ export default function ContentBlocks({ lang, slug }: ContentBlocksProps) {
                   </div>
                 )}
 
-                {/* Title + subtitle */}
+                {/* Title */}
                 <h3 className="mb-2 text-lg font-semibold text-slate-800">
                   {block.title}
                 </h3>
-                {block.subtitle && block.type === "image" && (
-                  <p className="mb-3 text-sm text-slate-600">
-                    {block.subtitle}
-                  </p>
-                )}
 
-                {/* Details text (new field) */}
+                {/* Details text (HTML from Directus) */}
                 {block.details && (
-                  <p className="mt-auto text-sm leading-relaxed text-slate-700">
-                    {block.details}
-                  </p>
+                  <div
+                    className="mt-auto text-sm leading-relaxed text-slate-700"
+                    dangerouslySetInnerHTML={{ __html: block.details }}
+                  />
                 )}
               </article>
             );
@@ -135,4 +131,3 @@ export default function ContentBlocks({ lang, slug }: ContentBlocksProps) {
     </section>
   );
 }
-

@@ -5,7 +5,7 @@ import { directusFetch } from "../lib/directus";
 interface WhyUsData {
   title: string;
   subtitle?: string | null;
-  intro_text?: string | null;
+  intro_text?: string | null;          // contains HTML from Directus
   more_btn_label?: string | null;
   more_btn_url?: string | null;
 }
@@ -60,9 +60,11 @@ export default function WhyUsSection({ lang, slug }: WhyUsSectionProps) {
         </header>
 
         {data.intro_text && (
-          <p className="mx-auto max-w-3xl text-base leading-relaxed text-slate-700">
-            {data.intro_text}
-          </p>
+          <div
+            className="mx-auto max-w-3xl text-base leading-relaxed text-slate-700"
+            // intro_text contains HTML from Directus
+            dangerouslySetInnerHTML={{ __html: data.intro_text }}
+          />
         )}
 
         {data.more_btn_label && data.more_btn_url && (

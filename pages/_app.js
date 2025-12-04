@@ -13,7 +13,7 @@ export default function App({ Component, pageProps }) {
     (Array.isArray(rawLang) ? rawLang[0] : rawLang) || "en"; // fallback to English
 
   return (
-      <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800">
       {/* Top navigation */}
       <header className="border-b border-slate-600/20">
         <Menu lang={lang} />
@@ -21,7 +21,6 @@ export default function App({ Component, pageProps }) {
 
       {/* Page content */}
       <main className="flex-1">
-        {/* Pass lang down to every page */}
         <Component {...pageProps} lang={lang} />
       </main>
 

@@ -1,38 +1,38 @@
 // pages/[lang]/[slug].tsx
-import { GetServerSideProps } from 'next';
-import Head from 'next/head';
-import FeatureSection from '../../components/FeatureSection';
-import WhyUsSection from '../../components/WhyUsSection';
-import ContentBlocks from '../../components/ContentBlocks';
+import { useRouter } from "next/router";
+import FeatureSection from "../../components/FeatureSection";
+import WhyUsSection from "../../components/WhyUsSection";
+import ContentBlocks from "../../components/ContentBlocks";
+import Section from "../../components/Section";
 
-interface Props {
-  slug: string;
+interface SlugPageProps {
   lang: string;
 }
 
-export default function Page({ slug, lang }: Props) {
+export default function SlugPage({ lang }: SlugPageProps) {
+  const router = useRouter();
+  const { slug } = router.query;
+
+  // Ensure we always have a string slug
+  const resolvedSlug =
+    (Array.isArray(slug) ? slug[0] : slug) || "consulting";
+
   return (
     <>
-      <Head>
-        <title>{slug}</title>
-      </Head>
+      {/* Dark hero / feature section */}
+      <Section>
+        <FeatureSection lang={lang} slug={resolvedSlug} />
+      </Section>
 
-      <main>
-        <FeatureSection slug={slug} lang={lang} />
-        <WhyUsSection slug={slug} lang={lang} />
-        <ContentBlocks slug={slug} lang={lang} />
-      </main>
+      {/* White "Why Us" section */}
+      <Section background="bg-white">
+        <WhyUsSection lang={lang} slug={resolvedSlug} />
+      </Section>
+
+      {/* Light grey content blocks */}
+      <Section background="bg-slate-50">
+        <ContentBlocks lang={lang} slug={resolvedSlug} />
+      </Section>
     </>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { lang, slug } = context.params as { lang: string; slug: string };
-
-  return {
-    props: {
-      lang,
-      slug,
-    },
-  };
-};

@@ -13,24 +13,24 @@ export default function SlugPage({ lang }: SlugPageProps) {
   const router = useRouter();
   const { slug } = router.query;
 
-  // Ensure we always have a string slug
+  // ensure we always have a string
   const resolvedSlug =
     (Array.isArray(slug) ? slug[0] : slug) || "consulting";
 
   return (
     <>
-      {/* Dark hero / feature section */}
+      {/* Hero / feature section */}
       <Section>
         <FeatureSection lang={lang} slug={resolvedSlug} />
       </Section>
 
-      {/* White "Why Us" section */}
-      <Section background="bg-white">
+      {/* Why Us section */}
+      <Section>
         <WhyUsSection lang={lang} slug={resolvedSlug} />
       </Section>
 
-      {/* Light grey content blocks */}
-      <Section background="bg-slate-50">
+      {/* Content blocks */}
+      <Section>
         <ContentBlocks lang={lang} slug={resolvedSlug} />
       </Section>
     </>

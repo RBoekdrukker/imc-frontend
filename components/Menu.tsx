@@ -6,8 +6,8 @@ import { directusFetch } from "../lib/directus";
 interface NavigationItem {
   id: number;
   title: string;
-  slug?: string;
-  url?: string;
+  slug?: string | null;
+  url?: string | null;
   parent_id?: number | null;
   language_code: string;
   children?: NavigationItem[];
@@ -61,8 +61,21 @@ export default function Menu({ lang }: { lang: string }) {
     return roots;
   };
 
+  const buildHref = (item: NavigationItem) => {
+    // 1) If URL is set in Directus, always use it
+    if (item.url) return item.url;
+
+    // 2) If slug is empty or "home", go to language root: /en, /de, /uk
+    if (!item.slug || item.slug === "home") {
+      return `/${item.language_code}`;
+    }
+
+    // 3) Normal case: /en/consulting, /en/services, etc.
+    return `/${item.language_code}/${item.slug}`;
+  };
+
   const renderItem = (item: NavigationItem) => {
-    const href = item.url ?? `/${item.language_code}/${item.slug}`;
+    const href = buildHref(item);
 
     return (
       <li key={item.id} className="relative group">
@@ -73,10 +86,10 @@ export default function Menu({ lang }: { lang: string }) {
         </Link>
 
         {item.children && item.children.length > 0 && (
-          <ul className="absolute left-0 -mt-1 bg-white text-gray-800 shadow-lg rounded-md opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity">
+          <ul className="absolute left-0 -mt-1 bg-white text-gray-800 shadow-lg rounded-md opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto">
             {item.children.map((child) => (
               <li key={child.id}>
-                <Link href={child.url ?? `/${child.language_code}/${child.slug}`}>
+                <Link href={buildHref(child)}>
                   <span className="px-4 py-2 block hover:bg-nicepage-primary hover:text-brand-menu cursor-pointer transition">
                     {child.title}
                   </span>

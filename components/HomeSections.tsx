@@ -12,7 +12,8 @@ interface HomeSection {
   id: number;
   title: string;
   subtitle?: string | null;
-  detail_slug?: string | null; // NEW: slug for target service/article
+  description?: string | null; // in case you used this name
+  detail_slug?: string | null;
   background_image?: { id: string } | string | null;
   published?: boolean;
 }
@@ -41,8 +42,6 @@ export default function HomeSections({ lang }: HomeSectionsProps) {
         setLoading(true);
         setError(null);
 
-        // For now we only filter on published; language-specific filtering
-        // can be added later if needed.
         const response = await directusFetch(
           "items/home_sections?filter[published][_eq]=true&sort=id&fields=*.*"
         );
@@ -79,14 +78,15 @@ export default function HomeSections({ lang }: HomeSectionsProps) {
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-4 md:grid-cols-3">
         {sections.map((section) => {
           const imageUrl = getAssetUrl(section.background_image);
-
           const href = section.detail_slug
             ? `/${lang}/services/${section.detail_slug}`
             : "#";
 
+          const text =
+            section.subtitle || section.description || "";
+
           const card = (
             <article className="flex h-full flex-col overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-slate-200 transition hover:shadow-md">
-              {/* Image */}
               {imageUrl && (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -96,21 +96,20 @@ export default function HomeSections({ lang }: HomeSectionsProps) {
                 />
               )}
 
-              {/* Text */}
               <div className="flex flex-1 flex-col p-6">
                 <h3 className="mb-2 text-lg font-semibold text-slate-900">
                   {section.title}
                 </h3>
-                {section.subtitle && (
+                {text && (
                   <p className="text-sm leading-relaxed text-slate-600">
-                    {section.subtitle}
+                    {text}
                   </p>
                 )}
               </div>
             </article>
           );
 
-          // If there is a detail_slug, make the whole card clickable
+          // ⚠️ Link wraps only THIS card, not the whole grid
           return section.detail_slug ? (
             <Link key={section.id} href={href} className="block">
               {card}

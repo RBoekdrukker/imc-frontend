@@ -79,7 +79,7 @@ export default function HomeSections({ lang }: HomeSectionsProps) {
         {sections.map((section) => {
           const imageUrl = getAssetUrl(section.background_image);
           const href = section.detail_slug
-            ? `/${lang}/services/${section.detail_slug}`
+            ? `/${lang}/${section.detail_slug}`
             : "#";
 
           const text =

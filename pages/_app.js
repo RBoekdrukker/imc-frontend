@@ -15,7 +15,7 @@ export default function App({ Component, pageProps }) {
   return (
       <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800">
       {/* Top navigation */}
-      <header>
+      <header className="border-b border-slate-600/20">
         <Menu lang={lang} />
       </header>
 

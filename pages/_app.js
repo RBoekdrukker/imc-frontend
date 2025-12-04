@@ -21,7 +21,8 @@ export default function App({ Component, pageProps }) {
 
       {/* Page content */}
       <main className="flex-1">
-        <Component {...pageProps} />
+        {/* Pass lang down to every page */}
+        <Component {...pageProps} lang={lang} />
       </main>
 
       {/* Global footer */}

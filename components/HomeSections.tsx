@@ -1,27 +1,92 @@
+// components/HomeSections.tsx
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { directusFetch } from "../lib/directus";
 
-export default function HomeSections({ sections, lang }) {
+const DIRECTUS_URL = (process.env.NEXT_PUBLIC_DIRECTUS_URL || "").replace(
+  /\/$/,
+  ""
+);
+
+interface HomeSection {
+  id: number;
+  title: string;
+  subtitle?: string | null;
+  detail_slug?: string | null; // NEW: slug for target service/article
+  background_image?: { id: string } | string | null;
+  published?: boolean;
+}
+
+interface HomeSectionsProps {
+  lang: string;
+}
+
+function getAssetUrl(file: { id: string } | string | null | undefined) {
+  if (!file) return null;
+  const id = typeof file === "string" ? file : file.id;
+  if (!id) return null;
+
+  if (!DIRECTUS_URL) return `/assets/${id}`;
+  return `${DIRECTUS_URL}/assets/${id}`;
+}
+
+export default function HomeSections({ lang }: HomeSectionsProps) {
+  const [sections, setSections] = useState<HomeSection[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchSections() {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // For now we only filter on published; language-specific filtering
+        // can be added later if needed.
+        const response = await directusFetch(
+          "items/home_sections?filter[published][_eq]=true&sort=id&fields=*.*"
+        );
+
+        const data = ((response as any)?.data || []) as HomeSection[];
+        setSections(data);
+      } catch (err) {
+        console.error("Error loading home sections:", err);
+        setError("Could not load home sections.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchSections();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="py-12">
+        <div className="mx-auto max-w-6xl px-4 text-center text-slate-200">
+          Loading sections…
+        </div>
+      </section>
+    );
+  }
+
+  if (error || sections.length === 0) {
+    return null;
+  }
+
   return (
     <section className="py-12">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
-
+      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-4 md:grid-cols-3">
         {sections.map((section) => {
-          const imageUrl = section.background_image
-            ? `${process.env.NEXT_PUBLIC_DIRECTUS_URL}/assets/${section.background_image.id}`
-            : null;
+          const imageUrl = getAssetUrl(section.background_image);
 
-          // Build link destination
           const href = section.detail_slug
             ? `/${lang}/services/${section.detail_slug}`
             : "#";
 
-          return (
-            <Link
-              key={section.id}
-              href={href}
-              className="block rounded-xl overflow-hidden shadow hover:shadow-lg transition bg-white"
-            >
-              {/* Top image */}
+          const card = (
+            <article className="flex h-full flex-col overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-slate-200 transition hover:shadow-md">
+              {/* Image */}
               {imageUrl && (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -31,16 +96,27 @@ export default function HomeSections({ sections, lang }) {
                 />
               )}
 
-              {/* Content */}
-              <div className="p-6">
-                <h3 className="text-xl font-semibold text-slate-900 mb-2">
+              {/* Text */}
+              <div className="flex flex-1 flex-col p-6">
+                <h3 className="mb-2 text-lg font-semibold text-slate-900">
                   {section.title}
                 </h3>
-                <p className="text-slate-600 text-sm leading-relaxed">
-                  {section.subtitle}
-                </p>
+                {section.subtitle && (
+                  <p className="text-sm leading-relaxed text-slate-600">
+                    {section.subtitle}
+                  </p>
+                )}
               </div>
+            </article>
+          );
+
+          // If there is a detail_slug, make the whole card clickable
+          return section.detail_slug ? (
+            <Link key={section.id} href={href} className="block">
+              {card}
             </Link>
+          ) : (
+            <div key={section.id}>{card}</div>
           );
         })}
       </div>

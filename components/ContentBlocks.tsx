@@ -1,5 +1,6 @@
 // components/ContentBlocks.tsx
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import { directusFetch } from "../lib/directus";
 
 interface ContentBlock {
@@ -8,7 +9,8 @@ interface ContentBlock {
   subtitle?: string | null;
   type: string; // "image" | "quote" | etc.
   image_file?: { id: string } | string | null;
-  details?: string | null;             // can contain HTML
+  details?: string | null;             // rich text / HTML
+  detail_slug?: string | null;         // NEW: slug for deep detail page
 }
 
 interface ContentBlocksProps {
@@ -86,11 +88,9 @@ export default function ContentBlocks({ lang, slug }: ContentBlocksProps) {
           {blocks.map((block) => {
             const imageUrl = getAssetUrl(block.image_file);
 
-            return (
-              <article
-                key={block.content_block_id}
-                className="flex h-full flex-col rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-200"
-              >
+            // --- Inner card content (used for both <div> and <Link>) ---
+            const card = (
+              <article className="flex h-full flex-col rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-200 transition hover:shadow-md">
                 {/* Top: image or quote */}
                 {block.type === "image" && imageUrl && (
                   <div className="mb-4 overflow-hidden rounded-lg">
@@ -124,6 +124,28 @@ export default function ContentBlocks({ lang, slug }: ContentBlocksProps) {
                   />
                 )}
               </article>
+            );
+
+            const key = block.content_block_id;
+
+            // --- If detail_slug is set, make the whole card clickable ---
+            if (block.detail_slug) {
+              return (
+                <Link
+                  key={key}
+                  href={`/${lang}/services/${block.detail_slug}`}
+                  className="block"
+                >
+                  {card}
+                </Link>
+              );
+            }
+
+            // --- Otherwise, just render a static card ---
+            return (
+              <div key={key}>
+                {card}
+              </div>
             );
           })}
         </div>

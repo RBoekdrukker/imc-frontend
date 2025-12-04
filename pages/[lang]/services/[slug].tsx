@@ -124,12 +124,25 @@ export default function ServiceDetailPage({ lang }: ServiceDetailPageProps) {
           )}
 
           {/* Body (rich text from Directus) */}
-          {article.body && (
+           {article.body && (
             <div
-              className="prose max-w-none prose-slate prose-headings:text-slate-900 prose-p:text-slate-800 prose-a:text-sky-700 prose-strong:text-slate-900"
-              dangerouslySetInnerHTML={{ __html: article.body }}
-            />
-          )}
+              className="
+              prose
+              max-w-none
+              prose-slate
+              prose-headings:text-slate-900
+              prose-p:text-slate-900
+              prose-a:text-sky-700
+              prose-strong:text-slate-900
+              prose-li:text-slate-800
+              prose-h2:text-slate-900
+              prose-h3:text-slate-900
+              prose-p:leading-relaxed
+              "
+    dangerouslySetInnerHTML={{ __html: article.body }}
+  />
+)}
+
         </div>
       </div>
     </article>

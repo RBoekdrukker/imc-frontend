@@ -1,57 +1,78 @@
 // components/WhyUsSection.tsx
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import Link from 'next/link';
+import React, { useEffect, useState } from "react";
+import { directusFetch } from "../lib/directus";
 
 interface WhyUsData {
   title: string;
-  subtitle: string;
-  intro_text: string;
-  more_btn?: string;
+  subtitle?: string | null;
+  intro_text?: string | null;
+  more_btn_label?: string | null;
+  more_btn_url?: string | null;
 }
 
-export default function WhyUsSection({ slug, lang }: { slug: string; lang: string }) {
-  const [whyUs, setWhyUs] = useState<WhyUsData | null>(null);
+interface WhyUsSectionProps {
+  lang: string;
+  slug: string;
+}
+
+export default function WhyUsSection({ lang, slug }: WhyUsSectionProps) {
+  const [data, setData] = useState<WhyUsData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchWhyUs = async () => {
+    async function fetchWhyUs() {
       try {
-        const res = await axios.get('http://localhost:8055/items/why_us_section', {
-          params: {
-            filter: {
-              slug: { _eq: slug },
-              language_code: { _eq: lang },
-              published: { _eq: true }
-            },
-            fields: 'title,subtitle,intro_text,more_btn'
-          }
-        });
-        setWhyUs(res.data.data[0] || null);
+        setError(null);
+
+        const response = await directusFetch<{ data: WhyUsData[] }>(
+          `items/why_us_section?filter[slug][_eq]=${encodeURIComponent(
+            slug
+          )}&filter[language_code][_eq]=${encodeURIComponent(
+            lang
+          )}&filter[published][_eq]=true&limit=1`
+        );
+
+        setData(response.data?.[0] || null);
       } catch (err) {
-        console.error(err);
-        setError('Failed to load Why Us section.');
+        console.error("Error loading Why Us section:", err);
+        setError("Could not load Why Us section.");
       }
-    };
+    }
 
     fetchWhyUs();
-  }, [slug, lang]);
+  }, [lang, slug]);
 
-  if (error) return <div className="text-red-600">{error}</div>;
-  if (!whyUs) return null;
+  if (error || !data) {
+    return null;
+  }
 
   return (
-    <section className="bg-white text-gray-800 py-16 px-6">
-      <div className="max-w-4xl mx-auto text-center">
-        <h2 className="text-4xl font-bold mb-4">{whyUs.title}</h2>
-        <h3 className="text-xl text-nicepage-accent font-semibold mb-6">{whyUs.subtitle}</h3>
-        <p className="text-lg mb-6 whitespace-pre-line">{whyUs.intro_text}</p>
-        {whyUs.more_btn && (
-          <Link href="#">
-            <span className="inline-block mt-4 px-6 py-2 border-2 border-nicepage-accent text-nicepage-accent rounded-full hover:bg-nicepage-accent hover:text-white transition">
-              {whyUs.more_btn}
-            </span>
-          </Link>
+    <section className="bg-white py-16">
+      <div className="mx-auto max-w-5xl px-4">
+        <header className="mb-8 text-center">
+          <h2 className="mb-2 text-3xl font-bold tracking-tight text-slate-900">
+            {data.title}
+          </h2>
+          {data.subtitle && (
+            <p className="text-base text-slate-600">{data.subtitle}</p>
+          )}
+        </header>
+
+        {data.intro_text && (
+          <p className="mx-auto max-w-3xl text-base leading-relaxed text-slate-700">
+            {data.intro_text}
+          </p>
+        )}
+
+        {data.more_btn_label && data.more_btn_url && (
+          <div className="mt-8 flex justify-center">
+            <a
+              href={data.more_btn_url}
+              className="rounded-full bg-sky-700 px-7 py-2.5 text-sm font-semibold uppercase tracking-wide text-white shadow-sm transition hover:bg-sky-800"
+            >
+              {data.more_btn_label}
+            </a>
+          </div>
         )}
       </div>
     </section>

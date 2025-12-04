@@ -1,64 +1,91 @@
 // components/FeatureSection.tsx
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import { directusFetch } from "../lib/directus";
 
 interface FeatureData {
+  feature_id: number;
   title: string;
-  description: string;
-  background_image?: {
-    id: string;
-  };
+  description?: string | null;
+  background_image?: { id: string } | string | null;
 }
 
-export default function FeatureSection({ slug, lang }: { slug: string; lang: string }) {
+interface FeatureSectionProps {
+  lang: string;
+  slug: string;
+}
+
+const DIRECTUS_URL = (process.env.NEXT_PUBLIC_DIRECTUS_URL || "").replace(
+  /\/$/,
+  ""
+);
+
+function getAssetUrl(file: { id: string } | string | null | undefined) {
+  if (!file) return null;
+  const id = typeof file === "string" ? file : file.id;
+  if (!id) return null;
+
+  if (!DIRECTUS_URL) return `/assets/${id}`;
+  return `${DIRECTUS_URL}/assets/${id}`;
+}
+
+export default function FeatureSection({ lang, slug }: FeatureSectionProps) {
   const [feature, setFeature] = useState<FeatureData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchFeature = async () => {
+    async function fetchFeature() {
       try {
-        const res = await axios.get('http://localhost:8055/items/feature_section', {
-          params: {
-            filter: {
-              slug: { _eq: slug },
-              language_code: { _eq: lang },
-              published: { _eq: true }
-            },
-        //    fields: '*'
-			fields: 'title,description,background_image.id'
-          }
-        });
-        console.log('[FeatureSection] data:', res.data.data); //add console log
-		setFeature(res.data.data[0] || null);
+        setError(null);
+
+        const response = await directusFetch<{ data: FeatureData[] }>(
+          `items/feature_section?filter[slug][_eq]=${encodeURIComponent(
+            slug
+          )}&filter[language_code][_eq]=${encodeURIComponent(
+            lang
+          )}&filter[published][_eq]=true&limit=1&fields=*.*`
+        );
+
+        const item = response.data?.[0] || null;
+        setFeature(item);
       } catch (err) {
-        console.error(err);
-        setError('Failed to load feature section.');
+        console.error("Error loading feature section:", err);
+        setError("Could not load feature section.");
       }
-    };
+    }
 
     fetchFeature();
-  }, [slug, lang]);
+  }, [lang, slug]);
 
-  if (error) return <div className="text-red-600">{error}</div>;
-  if (!feature) return null;
+  if (error || !feature) {
+    return null;
+  }
 
-  const bgImageUrl = feature.background_image
-    ? `http://localhost:8055/assets/${feature.background_image.id}`
-    : '';
+  const bgUrl = getAssetUrl(feature.background_image);
 
-	console.log('[FeatureSection] feature:', feature); //add console log
-	
-	if (error) return <div className="text-red-600">{error}</div>;
-	if (!feature) return <div className="text-yellow-400">FeatureSection: No data loaded</div>;
-  
   return (
-    <section
-      className="py-16 text-white bg-cover bg-center"
-      style={{ backgroundImage: bgImageUrl ? `url(${bgImageUrl})` : undefined }}
-    >
-      <div className="max-w-4xl mx-auto px-4 text-center">
-        <h2 className="text-4xl font-bold mb-4">{feature.title}</h2>
-        <p className="text-lg">{feature.description}</p>
+    <section className="bg-slate-900 py-20">
+      <div className="mx-auto flex max-w-6xl flex-col items-center gap-10 px-4 md:flex-row">
+        <div className="flex-1 text-center md:text-left">
+          <h2 className="mb-4 text-3xl font-bold tracking-tight text-white md:text-4xl">
+            {feature.title}
+          </h2>
+          {feature.description && (
+            <p className="max-w-xl text-base leading-relaxed text-slate-200">
+              {feature.description}
+            </p>
+          )}
+        </div>
+
+        {bgUrl && (
+          <div className="flex-1">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={bgUrl}
+              alt={feature.title}
+              className="h-64 w-full rounded-2xl object-cover shadow-xl ring-1 ring-slate-700/60"
+            />
+          </div>
+        )}
       </div>
     </section>
   );

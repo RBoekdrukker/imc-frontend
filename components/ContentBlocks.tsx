@@ -1,86 +1,136 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+// components/ContentBlocks.tsx
+import React, { useEffect, useState } from "react";
+import { directusFetch } from "../lib/directus";
 
 interface ContentBlock {
   content_block_id: number;
   title: string;
-  subtitle: string;
-  type: 'quote' | 'image';
-  image_file?: {
-    id: string;
-  };
-  details?: string;
+  subtitle?: string | null;
+  type: string; // "image" | "quote" | etc.
+  image_file?: { id: string } | string | null;
+  details?: string | null;
 }
 
-export default function ContentBlocks({ slug, lang }: { slug: string; lang: string }) {
+interface ContentBlocksProps {
+  lang: string;
+  slug: string;
+}
+
+const DIRECTUS_URL = (process.env.NEXT_PUBLIC_DIRECTUS_URL || "").replace(
+  /\/$/,
+  ""
+);
+
+function getAssetUrl(file: { id: string } | string | null | undefined) {
+  if (!file) return null;
+  const id = typeof file === "string" ? file : file.id;
+  if (!id) return null;
+
+  if (!DIRECTUS_URL) {
+    // Fallback – relative URL
+    return `/assets/${id}`;
+  }
+
+  return `${DIRECTUS_URL}/assets/${id}`;
+}
+
+export default function ContentBlocks({ lang, slug }: ContentBlocksProps) {
   const [blocks, setBlocks] = useState<ContentBlock[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchBlocks = async () => {
+    async function fetchBlocks() {
       try {
-        const res = await axios.get('http://localhost:8055/items/content_blocks', {
-          params: {
-            filter: {
-              slug: { _eq: slug },
-              language_code: { _eq: lang },
-              published: { _eq: true }
-            },
-            fields: 'content_block_id,title,subtitle,type,image_file.id,details'
-          }
-        });
-        setBlocks(res.data.data || []);
+        setLoading(true);
+        setError(null);
+
+        const response = await directusFetch<{ data: ContentBlock[] }>(
+          `items/content_blocks?filter[slug][_eq]=${encodeURIComponent(
+            slug
+          )}&filter[language_code][_eq]=${encodeURIComponent(
+            lang
+          )}&filter[published][_eq]=true&sort=content_block_id&limit=6&fields=*.*`
+        );
+
+        setBlocks(response.data || []);
       } catch (err) {
-        console.error(err);
-        setError('Failed to load content blocks.');
+        console.error("Error loading content blocks:", err);
+        setError("Could not load content blocks.");
+      } finally {
+        setLoading(false);
       }
-    };
+    }
 
     fetchBlocks();
-  }, [slug, lang]);
+  }, [lang, slug]);
 
-  if (error) return <div className="text-red-600">{error}</div>;
-  if (!blocks.length) return null;
+  if (loading) {
+    return (
+      <section className="bg-slate-50 py-12">
+        <div className="mx-auto max-w-6xl px-4 text-center text-slate-500">
+          Loading content…
+        </div>
+      </section>
+    );
+  }
 
-  const stripHTML = (html: string) =>
-    html.replace(/<[^>]+>/g, '');
+  if (error || blocks.length === 0) {
+    return null;
+  }
 
   return (
-    <section className="bg-brand-primary py-16 px-4">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
-        {blocks.map((block) => {
-          const imageUrl = block.image_file?.id
-            ? `http://localhost:8055/assets/${block.image_file.id}`
-            : '';
+    <section className="bg-slate-50 py-16">
+      <div className="mx-auto max-w-6xl px-4">
+        <div className="grid gap-8 md:grid-cols-3">
+          {blocks.map((block) => {
+            const imageUrl = getAssetUrl(block.image_file);
 
-          return (
-            <div
-              key={block.content_block_id}
-              className="relative rounded-xl shadow-md overflow-hidden flex flex-col bg-white"
-            >
-              {block.type === 'image' && imageUrl ? (
-                <div
-                  className="h-48 bg-cover bg-center flex flex-col justify-end p-6 text-white"
-                  style={{ backgroundImage: `url(${imageUrl})` }}
-                >
-                  <div className="bg-black bg-opacity-50 p-4 rounded">
-                    <h3 className="text-xl font-bold">{stripHTML(block.title)}</h3>
-                    <p className="text-sm">{stripHTML(block.subtitle)}</p>
+            return (
+              <article
+                key={block.content_block_id}
+                className="flex h-full flex-col rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-200"
+              >
+                {/* Top: image or quote */}
+                {block.type === "image" && imageUrl && (
+                  <div className="mb-4 overflow-hidden rounded-lg">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={imageUrl}
+                      alt={block.title || ""}
+                      className="h-40 w-full object-cover"
+                    />
                   </div>
-                </div>
-              ) : (
-                <div className="p-6 h-48 flex flex-col justify-start">
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">{stripHTML(block.title)}</h3>
-                  <p className="text-gray-600 text-sm whitespace-pre-line">{stripHTML(block.subtitle)}</p>
-                </div>
-              )}
+                )}
 
-              {block.details && (
-                <div className="p-4 border-t text-sm text-gray-500">{block.details}</div>
-              )}
-            </div>
-          );
-        })}
+                {block.type !== "image" && (
+                  <div className="mb-4 border-l-4 border-sky-600 pl-4">
+                    <p className="text-sm italic text-slate-600">
+                      {block.subtitle}
+                    </p>
+                  </div>
+                )}
+
+                {/* Title + subtitle */}
+                <h3 className="mb-2 text-lg font-semibold text-slate-800">
+                  {block.title}
+                </h3>
+                {block.subtitle && block.type === "image" && (
+                  <p className="mb-3 text-sm text-slate-600">
+                    {block.subtitle}
+                  </p>
+                )}
+
+                {/* Details text (new field) */}
+                {block.details && (
+                  <p className="mt-auto text-sm leading-relaxed text-slate-700">
+                    {block.details}
+                  </p>
+                )}
+              </article>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

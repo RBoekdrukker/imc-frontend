@@ -1,20 +1,57 @@
+// components/Services.tsx
+import React from "react";
+import Section from "./Section";
+
+interface ServiceItem {
+  id: number;
+  title: string;
+  description: string;
+}
+
+const SERVICES: ServiceItem[] = [
+  {
+    id: 1,
+    title: "Strategic Consulting",
+    description:
+      "We help you clarify priorities, design robust roadmaps, and translate strategy into measurable outcomes.",
+  },
+  {
+    id: 2,
+    title: "Process Optimization",
+    description:
+      "Streamline workflows, reduce complexity, and improve transparency across your organization.",
+  },
+  {
+    id: 3,
+    title: "Digital Implementation",
+    description:
+      "From requirements to rollout, we support the implementation of sustainable digital solutions.",
+  },
+];
+
 export default function Services() {
   return (
-    <section className="bg-gray-100 py-20 px-4">
-      <div className="max-w-6xl mx-auto grid gap-12 md:grid-cols-3 text-center">
-        <div className="bg-white p-8 shadow-sm rounded-2xl">
-          <h3 className="text-xl text-gray-800 font-semibold mb-4">Strategy Consulting</h3>
-          <p className="text-gray-500">Helping businesses grow through tailored strategies.</p>
-        </div>
-        <div className="bg-white p-8 shadow-sm rounded-2xl">
-          <h3 className="text-xl text-gray-800 font-semibold mb-4">Market Entry</h3>
-          <p className="text-gray-500">Guiding international expansion with local expertise.</p>
-        </div>
-        <div className="bg-white p-8 shadow-sm rounded-2xl">
-          <h3 className="text-xl text-gray-800 font-semibold mb-4">Operational Support</h3>
-          <p className="text-gray-500">Optimizing operations for efficiency and performance.</p>
-        </div>
+    <Section
+      id="services"
+      title="Our Services"
+      subtitle="Independent consulting with a focus on clarity, structure, and execution."
+      light
+    >
+      <div className="grid gap-8 md:grid-cols-3">
+        {SERVICES.map((service) => (
+          <article
+            key={service.id}
+            className="flex h-full flex-col rounded-2xl bg-slate-50 p-6 shadow-sm ring-1 ring-slate-200"
+          >
+            <h3 className="mb-3 text-lg font-semibold text-slate-900">
+              {service.title}
+            </h3>
+            <p className="text-sm leading-relaxed text-slate-700">
+              {service.description}
+            </p>
+          </article>
+        ))}
       </div>
-    </section>
+    </Section>
   );
 }

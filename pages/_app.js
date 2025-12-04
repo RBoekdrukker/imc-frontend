@@ -1,17 +1,31 @@
-import '../styles/globals.css';
-import Menu from '../components/Menu';
-import { useRouter } from 'next/router';
+// pages/_app.js
+import "../styles/globals.css";
+import Menu from "../components/Menu";
+import Footer from "../components/Footer";
+import { useRouter } from "next/router";
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();
-  const lang = router.query.lang || 'en'; // fallback to English if missing
+
+  // router.query.lang can be string | string[] | undefined
+  const rawLang = router.query.lang;
+  const lang =
+    (Array.isArray(rawLang) ? rawLang[0] : rawLang) || "en"; // fallback to English
 
   return (
-    <>
-      <Menu lang={lang} />
-      <main className="p-6 max-w-4xl mx-auto">
+    <div className="min-h-screen flex flex-col bg-slate-900">
+      {/* Top navigation */}
+      <header>
+        <Menu lang={lang} />
+      </header>
+
+      {/* Page content */}
+      <main className="flex-1">
         <Component {...pageProps} />
       </main>
-    </>
+
+      {/* Global footer */}
+      <Footer />
+    </div>
   );
 }

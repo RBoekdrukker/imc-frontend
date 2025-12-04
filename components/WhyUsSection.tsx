@@ -24,7 +24,7 @@ export default function WhyUsSection({ lang, slug }: WhyUsSectionProps) {
       try {
         setError(null);
 
-        const response = await directusFetch<{ data: WhyUsData[] }>(
+        const response = await directusFetch(
           `items/why_us_section?filter[slug][_eq]=${encodeURIComponent(
             slug
           )}&filter[language_code][_eq]=${encodeURIComponent(
@@ -32,7 +32,8 @@ export default function WhyUsSection({ lang, slug }: WhyUsSectionProps) {
           )}&filter[published][_eq]=true&limit=1`
         );
 
-        setData(response.data?.[0] || null);
+        const items = ((response as any)?.data || []) as WhyUsData[];
+        setData(items[0] || null);
       } catch (err) {
         console.error("Error loading Why Us section:", err);
         setError("Could not load Why Us section.");

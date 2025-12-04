@@ -37,7 +37,7 @@ export default function FeatureSection({ lang, slug }: FeatureSectionProps) {
       try {
         setError(null);
 
-        const response = await directusFetch<{ data: FeatureData[] }>(
+        const response = await directusFetch(
           `items/feature_section?filter[slug][_eq]=${encodeURIComponent(
             slug
           )}&filter[language_code][_eq]=${encodeURIComponent(
@@ -45,7 +45,8 @@ export default function FeatureSection({ lang, slug }: FeatureSectionProps) {
           )}&filter[published][_eq]=true&limit=1&fields=*.*`
         );
 
-        const item = response.data?.[0] || null;
+        const items = ((response as any)?.data || []) as FeatureData[];
+        const item = items[0] || null;
         setFeature(item);
       } catch (err) {
         console.error("Error loading feature section:", err);

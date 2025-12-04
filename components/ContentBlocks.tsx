@@ -27,7 +27,6 @@ function getAssetUrl(file: { id: string } | string | null | undefined) {
   if (!id) return null;
 
   if (!DIRECTUS_URL) {
-    // Fallback – relative URL
     return `/assets/${id}`;
   }
 
@@ -45,7 +44,7 @@ export default function ContentBlocks({ lang, slug }: ContentBlocksProps) {
         setLoading(true);
         setError(null);
 
-        const response = await directusFetch<{ data: ContentBlock[] }>(
+        const response = await directusFetch(
           `items/content_blocks?filter[slug][_eq]=${encodeURIComponent(
             slug
           )}&filter[language_code][_eq]=${encodeURIComponent(
@@ -53,7 +52,8 @@ export default function ContentBlocks({ lang, slug }: ContentBlocksProps) {
           )}&filter[published][_eq]=true&sort=content_block_id&limit=6&fields=*.*`
         );
 
-        setBlocks(response.data || []);
+        const data = ((response as any)?.data || []) as ContentBlock[];
+        setBlocks(data);
       } catch (err) {
         console.error("Error loading content blocks:", err);
         setError("Could not load content blocks.");
@@ -103,7 +103,7 @@ export default function ContentBlocks({ lang, slug }: ContentBlocksProps) {
                   </div>
                 )}
 
-                {block.type !== "image" && (
+                {block.type !== "image" && block.subtitle && (
                   <div className="mb-4 border-l-4 border-sky-600 pl-4">
                     <p className="text-sm italic text-slate-600">
                       {block.subtitle}
@@ -135,3 +135,4 @@ export default function ContentBlocks({ lang, slug }: ContentBlocksProps) {
     </section>
   );
 }
+

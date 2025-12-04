@@ -1,31 +1,27 @@
 // pages/index.tsx
-import Head from 'next/head';
-import Hero from '../components/Hero';
-import HomeSections from '../components/HomeSections';
-import CallToAction from '../components/CallToAction';
-import Section from '../components/Section';
+import Hero from "../components/Hero";
+import Section from "../components/Section";
+import HomeSections from "../components/HomeSections";
+import CallToAction from "../components/CallToAction";
 
-export default function Home() {
+interface HomePageProps {
+  lang?: string; // comes from _app.js
+}
+
+export default function HomePage({ lang = "en" }: HomePageProps) {
   return (
     <>
-      <Head>
-        <title>IMC - Home</title>
-        <meta name="description" content="IMC Consulting - Home" />
-      </Head>
+      <Section>
+        <Hero />
+      </Section>
 
-      <main>
-        <Section>
-			<Hero />
-		</Section>
+      <Section>
+        <HomeSections lang={lang} />
+      </Section>
 
-		<Section>
-                        <HomeSections lang={lang} />
-		</Section>
-
-		<Section>
-			<CallToAction />
-		</Section>
-      </main>
+      <Section>
+        <CallToAction />
+      </Section>
     </>
   );
 }

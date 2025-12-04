@@ -1,70 +1,49 @@
-// HomeSections.tsx
+import Link from "next/link";
 
-import { directusFetch } from "../lib/directus"; 
-import { useEffect, useState } from 'react';
-import SectionContainer from './layout/SectionContainer';
-
-interface HomeSection {
-  id: number;
-  title: string;
-  body: string;
-  background_image?: {
-    id: string;
-  };
-}
-
-export default function HomeSections() {
-  const [sections, setSections] = useState<HomeSection[]>([]);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchSections = async () => {
-      try {
-        const res = await directusFetch("items/home_sections", {
-          fields: "id,title,body,background_image.id",
-          "filter[published][_eq]": "true",
-        });
-
-        setSections(res.data);
-      } catch (err) {
-        console.error("Failed loading home sections:", err);
-        setError("Unable to load homepage sections");
-      }
-    };
-
-    fetchSections();
-  }, []);
-
+export default function HomeSections({ sections, lang }) {
   return (
-    <SectionContainer className="rounded-x3">
-      {error && <p className="text-red-600">{error}</p>}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {sections.map((section) => (
-          <div key={section.id} className="bg-white border border-brand-primary shadow-lg rounded-2xl overflow-hidden">
+    <section className="py-12">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
 
-            {/* Background Image Banner */}
-            {section.background_image && (
-              <img
-                src={`${process.env.NEXT_PUBLIC_DIRECTUS_URL}/assets/${section.background_image.id}`}
-                alt={section.title}
-                className="w-full h-32 object-cover"
-              />
-            )}
+        {sections.map((section) => {
+          const imageUrl = section.background_image
+            ? `${process.env.NEXT_PUBLIC_DIRECTUS_URL}/assets/${section.background_image.id}`
+            : null;
 
-            {/* Text Content */}
-            <div className="p-6">
-              <h3 className="text-2xl font-bold text-center text-gray-800 mb-2 leading-snug min-h-[3.5rem]">
-                {section.title}
-              </h3>
+          // Build link destination
+          const href = section.detail_slug
+            ? `/${lang}/services/${section.detail_slug}`
+            : "#";
 
-              <div
-                className="text-gray-700 text-center text-sm leading-relaxed prose max-w-none"
-                dangerouslySetInnerHTML={{ __html: section.body }}
-              />
-            </div>
-          </div>
-        ))}
+          return (
+            <Link
+              key={section.id}
+              href={href}
+              className="block rounded-xl overflow-hidden shadow hover:shadow-lg transition bg-white"
+            >
+              {/* Top image */}
+              {imageUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={imageUrl}
+                  alt={section.title}
+                  className="h-40 w-full object-cover"
+                />
+              )}
+
+              {/* Content */}
+              <div className="p-6">
+                <h3 className="text-xl font-semibold text-slate-900 mb-2">
+                  {section.title}
+                </h3>
+                <p className="text-slate-600 text-sm leading-relaxed">
+                  {section.subtitle}
+                </p>
+              </div>
+            </Link>
+          );
+        })}
       </div>
-    </SectionContainer>
+    </section>
   );
 }

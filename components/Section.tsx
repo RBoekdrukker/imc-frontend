@@ -1,46 +1,38 @@
 // components/Section.tsx
-
-import React from "react";
+import { ReactNode } from "react";
 
 interface SectionProps {
-  children: React.ReactNode;
   id?: string;
   title?: string;
   subtitle?: string;
-  light?: boolean;      // if true → light background + dark text
+  light?: boolean;
   className?: string;
-  background?: string;  // optional explicit background class override
+  children?: ReactNode;
 }
 
 export default function Section({
-  children,
   id,
   title,
   subtitle,
   light = false,
   className = "",
-  background = "",
+  children,
 }: SectionProps) {
-  // Background + text colors
-  const bgClass = background || (light ? "bg-white" : "");
-  const titleColor = light ? "text-slate-900" : "text-slate-100";
-  const subtitleColor = light ? "text-slate-600" : "text-slate-300";
+  const bg = light ? "bg-white text-gray-900" : "bg-transparent text-white";
 
   return (
     <section
       id={id}
-      className={`${bgClass} py-10 md:py-14 ${className}`}
+      className={`${bg} py-16 md:py-20 ${className}`}
     >
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-0">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {(title || subtitle) && (
-          <header className="mb-8 text-center">
+          <header className="mb-10 text-center">
             {title && (
-              <h2 className={`text-3xl font-semibold tracking-tight ${titleColor}`}>
-                {title}
-              </h2>
+              <h2 className="text-3xl font-bold mb-4 text-center">{title}</h2>
             )}
             {subtitle && (
-              <p className={`mt-3 text-base leading-relaxed ${subtitleColor}`}>
+              <p className="text-lg text-gray-300 md:text-gray-600 max-w-3xl mx-auto text-justify">
                 {subtitle}
               </p>
             )}

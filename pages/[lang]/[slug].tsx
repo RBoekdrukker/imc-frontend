@@ -19,7 +19,7 @@ export default function SlugPage({ lang }: SlugPageProps) {
   return (
     <>
       {/* Top section no spacing */}
-      <Section class="py-0">
+      <Section>
         <FeatureSection lang={lang} slug={resolvedSlug} />
       </Section>
 

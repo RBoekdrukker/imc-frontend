@@ -1,43 +1,26 @@
 // components/Section.tsx
-import React, { ReactNode } from "react";
+
+import React from "react";
 
 interface SectionProps {
-  id?: string;
-  title?: string;
-  subtitle?: string;
-  children?: ReactNode;
-  light?: boolean;
+  children: React.ReactNode;
+  className?: string;     // <-- THIS is required
+  background?: string;    // <-- optional background class
+  id?: string;            // <-- optional anchor id
 }
 
 export default function Section({
-  id,
-  title,
-  subtitle,
   children,
-  light = false,
+  className = "",
+  background = "",
+  id,
 }: SectionProps) {
-  const bg = light ? "bg-white" : "bg-slate-900";
-  const text = light ? "text-slate-900" : "text-white";
-  const subText = light ? "text-slate-600" : "text-slate-300";
-
   return (
-    <section id={id} className={`${bg} py-10 md:py-14 ${className}`}>
+    <section
+      id={id}
+      className={`${background} py-10 md:py-14 ${className}`}   // <-- Now valid
+    >
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-0">
-        {(title || subtitle) && (
-          <header className="mb-8 text-center">
-            {title && (
-              <h2
-                className={`mb-2 text-3xl font-bold tracking-tight ${text}`}
-              >
-                {title}
-              </h2>
-            )}
-            {subtitle && (
-              <p className={`text-base ${subText}`}>{subtitle}</p>
-            )}
-          </header>
-        )}
-
         {children}
       </div>
     </section>

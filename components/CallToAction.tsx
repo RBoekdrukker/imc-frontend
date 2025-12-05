@@ -41,10 +41,10 @@ export default function CallToAction() {
 
   return (
     <section className="py-16 px-6 bg-slate-100 text-center">
-      <h2 className="text-3xl text-red-600 font-bold mb-4">{cta.title}</h2>
+      <h2 className="text-3xl text-blue-900 font-bold mb-4">{cta.title}</h2>
 
       {cta.subtitle && (
-        <p className="text-lg text-red-600 mb-6 max-w-2xl mx-auto">{cta.subtitle}</p>
+        <p className="text-lg text-gray-900 mb-6 max-w-2xl mx-auto">{cta.subtitle}</p>
       )}
 
       {cta.button_text && cta.button_url && (

@@ -6,7 +6,7 @@ import { directusFetch } from "../lib/directus";
 interface HomeSectionItem {
   id: number;
   title: string;
-  body?: string | null;
+  body?: string | null;          // rich text / WYSIWYG from Directus
   button_label?: string | null;
   detail_slug?: string | null;
   background_image?: string | { id: string } | null;
@@ -20,7 +20,9 @@ interface HomeSectionsProps {
 
 function getAssetUrl(file: any | null | undefined): string | null {
   if (!file) return null;
-  if (typeof file === "string") return `${process.env.NEXT_PUBLIC_DIRECTUS_URL}/assets/${file}`;
+  if (typeof file === "string") {
+    return `${process.env.NEXT_PUBLIC_DIRECTUS_URL}/assets/${file}`;
+  }
   if (typeof file === "object" && file.id) {
     return `${process.env.NEXT_PUBLIC_DIRECTUS_URL}/assets/${file.id}`;
   }
@@ -37,8 +39,9 @@ export default function HomeSections({ lang }: HomeSectionsProps) {
         const response = await directusFetch("items/home_sections", {
           "filter[language_code][_eq]": lang,
           "filter[published][_eq]": "true",
-          "sort[]": "sort",
-          fields: "id,title,body,button_label,detail_slug,background_image,language_code,sort",
+          "sort[]": "sort", // ⬅️ keep cards in Directus sort order
+          fields:
+            "id,title,body,button_label,detail_slug,background_image,language_code,sort",
         });
 
         setSections(response.data || []);
@@ -53,16 +56,10 @@ export default function HomeSections({ lang }: HomeSectionsProps) {
   }, [lang]);
 
   if (error) {
-    return (
-      <div className="text-center text-red-500 py-4">
-        {error}
-      </div>
-    );
+    return <div className="text-center text-red-500 py-4">{error}</div>;
   }
 
-  if (!sections.length) {
-    return null;
-  }
+  if (!sections.length) return null;
 
   return (
     <div className="grid gap-8 md:grid-cols-3">
@@ -86,10 +83,12 @@ export default function HomeSections({ lang }: HomeSectionsProps) {
                 {section.title}
               </h3>
 
+              {/* Body as HTML (WYSIWYG) */}
               {section.body && (
-                <p className="text-sm leading-relaxed text-slate-600 whitespace-pre-line">
-                  {section.body}
-                </p>
+                <div
+                  className="prose prose-sm max-w-none prose-p:my-0 prose-p:text-slate-600"
+                  dangerouslySetInnerHTML={{ __html: section.body }}
+                />
               )}
             </div>
           </article>

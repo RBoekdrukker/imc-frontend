@@ -18,8 +18,8 @@ export default function SlugPage({ lang }: SlugPageProps) {
 
   return (
     <>
-      {/* Dark hero feature section */}
-      <Section>
+      {/* Top section no spacing */}
+      <Section id="Feature" className="py-0">
         <FeatureSection lang={lang} slug={resolvedSlug} />
       </Section>
 

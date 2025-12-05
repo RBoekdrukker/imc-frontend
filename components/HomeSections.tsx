@@ -86,7 +86,7 @@ export default function HomeSections({ lang }: HomeSectionsProps) {
               {/* Body as HTML (WYSIWYG) */}
               {section.body && (
                 <div
-                  className="prose prose-sm max-w-none text-justify prose-p:my-0 prose-p:text-gray-900"
+                  className="prose prose-sm max-w-none text-justify text-gray-900 prose-p:my-0 prose-p:text-gray-900"
                   dangerouslySetInnerHTML={{ __html: section.body }}
                 />
               )}

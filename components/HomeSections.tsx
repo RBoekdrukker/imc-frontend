@@ -1,124 +1,108 @@
 // components/HomeSections.tsx
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { directusFetch } from "../lib/directus";
 
-const DIRECTUS_URL = (process.env.NEXT_PUBLIC_DIRECTUS_URL || "").replace(
-  /\/$/,
-  ""
-);
-
-interface HomeSection {
+interface HomeSectionItem {
   id: number;
   title: string;
-  subtitle?: string | null;
-  description?: string | null; // in case you used this name
+  body?: string | null;
+  button_label?: string | null;
   detail_slug?: string | null;
-  background_image?: { id: string } | string | null;
-  published?: boolean;
+  background_image?: string | { id: string } | null;
+  language_code: string;
+  sort?: number;
 }
 
 interface HomeSectionsProps {
   lang: string;
 }
 
-function getAssetUrl(file: { id: string } | string | null | undefined) {
+function getAssetUrl(file: any | null | undefined): string | null {
   if (!file) return null;
-  const id = typeof file === "string" ? file : file.id;
-  if (!id) return null;
-
-  if (!DIRECTUS_URL) return `/assets/${id}`;
-  return `${DIRECTUS_URL}/assets/${id}`;
+  if (typeof file === "string") return `${process.env.NEXT_PUBLIC_DIRECTUS_URL}/assets/${file}`;
+  if (typeof file === "object" && file.id) {
+    return `${process.env.NEXT_PUBLIC_DIRECTUS_URL}/assets/${file.id}`;
+  }
+  return null;
 }
 
 export default function HomeSections({ lang }: HomeSectionsProps) {
-  const [sections, setSections] = useState<HomeSection[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [sections, setSections] = useState<HomeSectionItem[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchSections() {
+    const loadSections = async () => {
       try {
-        setLoading(true);
+        const response = await directusFetch("items/home_sections", {
+          "filter[language_code][_eq]": lang,
+          "filter[published][_eq]": "true",
+          "sort[]": "sort",
+          fields: "id,title,body,button_label,detail_slug,background_image,language_code,sort",
+        });
+
+        setSections(response.data || []);
         setError(null);
-
-        const response = await directusFetch(
-          "items/home_sections?filter[published][_eq]=true&sort=id&fields=*.*"
-        );
-
-        const data = ((response as any)?.data || []) as HomeSection[];
-        setSections(data);
       } catch (err) {
-        console.error("Error loading home sections:", err);
-        setError("Could not load home sections.");
-      } finally {
-        setLoading(false);
+        console.error("Failed to load home sections", err);
+        setError("Sections could not be loaded.");
       }
-    }
+    };
 
-    fetchSections();
-  }, []);
+    loadSections();
+  }, [lang]);
 
-  if (loading) {
+  if (error) {
     return (
-      <section className="py-12">
-        <div className="mx-auto max-w-6xl px-4 text-center text-slate-200">
-          Loading sections…
-        </div>
-      </section>
+      <div className="text-center text-red-500 py-4">
+        {error}
+      </div>
     );
   }
 
-  if (error || sections.length === 0) {
+  if (!sections.length) {
     return null;
   }
 
   return (
-    <section className="py-12">
-      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-4 md:grid-cols-3">
-        {sections.map((section) => {
-          const imageUrl = getAssetUrl(section.background_image);
-          const href = section.detail_slug
-            ? `/${lang}/${section.detail_slug}`
-            : "#";
+    <div className="grid gap-8 md:grid-cols-3">
+      {sections.map((section) => {
+        const href = section.detail_slug ? `/${lang}/${section.detail_slug}` : "#";
+        const imageUrl = getAssetUrl(section.background_image);
 
-          const text =
-            section.subtitle || section.description || "";
+        const card = (
+          <article className="flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 transition hover:shadow-md">
+            {imageUrl && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={imageUrl}
+                alt={section.title}
+                className="h-40 w-full object-cover"
+              />
+            )}
 
-          const card = (
-            <article className="flex h-full flex-col overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-slate-200 transition hover:shadow-md">
-              {imageUrl && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={imageUrl}
-                  alt={section.title}
-                  className="h-40 w-full object-cover"
-                />
+            <div className="flex flex-1 flex-col p-6">
+              <h3 className="mb-3 text-lg font-semibold text-slate-900">
+                {section.title}
+              </h3>
+
+              {section.body && (
+                <p className="text-sm leading-relaxed text-slate-600 whitespace-pre-line">
+                  {section.body}
+                </p>
               )}
+            </div>
+          </article>
+        );
 
-              <div className="flex flex-1 flex-col p-6">
-                <h3 className="mb-2 text-lg font-semibold text-slate-900">
-                  {section.title}
-                </h3>
-                {text && (
-                  <p className="text-sm leading-relaxed text-slate-600">
-                    {text}
-                  </p>
-                )}
-              </div>
-            </article>
-          );
-
-          // ⚠️ Link wraps only THIS card, not the whole grid
-          return section.detail_slug ? (
-            <Link key={section.id} href={href} className="block">
-              {card}
-            </Link>
-          ) : (
-            <div key={section.id}>{card}</div>
-          );
-        })}
-      </div>
-    </section>
+        return section.detail_slug ? (
+          <Link key={section.id} href={href} className="block">
+            {card}
+          </Link>
+        ) : (
+          <div key={section.id}>{card}</div>
+        );
+      })}
+    </div>
   );
 }

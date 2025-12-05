@@ -21,8 +21,8 @@ export default function Section({
   const subText = light ? "text-slate-600" : "text-slate-300";
 
   return (
-    <section id={id} className={`${bg} py-16`}>
-      <div className="mx-auto max-w-6xl px-4">
+    <section id={id} className={`${bg} py-10 md:py-14 ${className}`}>
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-0">
         {(title || subtitle) && (
           <header className="mb-8 text-center">
             {title && (

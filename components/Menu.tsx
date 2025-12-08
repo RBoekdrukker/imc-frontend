@@ -25,6 +25,7 @@ export default function Menu({ lang }: { lang: string }) {
   const [navigation, setNavigation] = useState<NavigationItem[]>([]);
   const [languages, setLanguages] = useState<Language[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [langOpen, setLangOpen] = useState(false);
 
   const router = useRouter();
 
@@ -112,21 +113,26 @@ export default function Menu({ lang }: { lang: string }) {
   };
 
   const handleLanguageChange = (targetCode: string) => {
-    // current slug (if we are on /[lang]/[slug])
     const slug = router.query.slug as string | undefined;
 
     if (slug) {
       // Service / detail page: keep same slug, switch lang
       router.push(`/${targetCode}/${slug}`);
     } else {
-      // Home page: default language at "/"
+      // Home page
       if (targetCode === "en") {
         router.push("/");
       } else {
         router.push(`/${targetCode}`);
       }
     }
+
+    setLangOpen(false);
   };
+
+  const currentLang =
+    languages.find((l) => l.language_code === lang) ||
+    languages[0] || { label: lang.toUpperCase(), flag_emoji: "" };
 
   return (
     <nav className="bg-brand-menu text-nicepage-primary font-medium shadow">
@@ -141,27 +147,45 @@ export default function Menu({ lang }: { lang: string }) {
             )}
           </ul>
 
-          {/* Right: language selector */}
-          <div className="flex items-center space-x-1">
-            {languages.map((lng) => (
-              <button
-                key={lng.id}
-                type="button"
-                onClick={() => handleLanguageChange(lng.language_code)}
-                className={`flex items-center px-2 py-1 rounded text-sm transition ${
-                  lng.language_code === lang
-                    ? "bg-slate-100 text-slate-900"
-                    : "text-slate-100 hover:bg-slate-700"
-                }`}
-              >
-                {lng.flag_emoji && (
-                  <span className="mr-1 text-lg leading-none">
-                    {lng.flag_emoji}
-                  </span>
-                )}
-                <span>{lng.label}</span>
-              </button>
-            ))}
+          {/* Right: language dropdown */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setLangOpen((open) => !open)}
+              className="flex items-center px-3 py-1.5 rounded bg-slate-800/60 hover:bg-slate-700 text-sm text-slate-50 transition"
+            >
+              {currentLang.flag_emoji && (
+                <span className="mr-1 text-lg leading-none">
+                  {currentLang.flag_emoji}
+                </span>
+              )}
+              <span className="mr-1">{currentLang.label}</span>
+              <span className="text-xs opacity-80">▾</span>
+            </button>
+
+            {langOpen && (
+              <div className="absolute right-0 mt-2 w-40 bg-white text-slate-800 rounded-md shadow-lg py-1 z-50">
+                {languages.map((lng) => (
+                  <button
+                    key={lng.id}
+                    type="button"
+                    onClick={() => handleLanguageChange(lng.language_code)}
+                    className={`w-full flex items-center px-3 py-1.5 text-sm text-left hover:bg-slate-100 transition ${
+                      lng.language_code === lang
+                        ? "font-semibold text-slate-900"
+                        : "text-slate-700"
+                    }`}
+                  >
+                    {lng.flag_emoji && (
+                      <span className="mr-2 text-lg leading-none">
+                        {lng.flag_emoji}
+                      </span>
+                    )}
+                    <span>{lng.label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

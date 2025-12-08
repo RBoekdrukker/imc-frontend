@@ -15,7 +15,7 @@ export default function HomePage({ lang = "en" }: HomePageProps) {
         <Hero />
       </Section>
 
-      <Section>
+      <Section className="py-16 md:py-20">
         <HomeSections lang={lang} />
       </Section>
 

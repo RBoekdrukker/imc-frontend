@@ -1,55 +1,75 @@
 // components/Menu.tsx
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { directusFetch } from "../lib/directus";
 
 interface NavigationItem {
   id: number;
   title: string;
-  slug?: string | null;
-  url?: string | null;
+  slug?: string;
+  url?: string;
   parent_id?: number | null;
   language_code: string;
   children?: NavigationItem[];
 }
 
+interface Language {
+  id: number;
+  language_code: string;
+  label: string;
+  flag_emoji?: string;
+}
+
 export default function Menu({ lang }: { lang: string }) {
   const [navigation, setNavigation] = useState<NavigationItem[]>([]);
+  const [languages, setLanguages] = useState<Language[]>([]);
   const [error, setError] = useState<string | null>(null);
 
+  const router = useRouter();
+
   useEffect(() => {
-    const fetchNavigation = async () => {
+    const fetchData = async () => {
       try {
-        const data = await directusFetch("items/navigation_items", {
+        // Navigation items (language-specific)
+        const navRes = await directusFetch("items/navigation_items", {
           "filter[language_code][_eq]": lang,
           "filter[published][_eq]": "true",
           fields: "id,title,slug,url,parent_id,language_code,sort",
           "sort[]": "sort",
         });
 
-        const items: NavigationItem[] = data.data;
+        const items: NavigationItem[] = navRes.data;
         const tree = buildTree(items);
         setNavigation(tree);
+
+        // Languages (global)
+        const langRes = await directusFetch("items/languages", {
+          "filter[published][_eq]": "true",
+          fields: "id,language_code,label,flag_emoji,sort",
+          "sort[]": "sort",
+        });
+
+        setLanguages(langRes.data);
+
         setError(null);
       } catch (err) {
-        console.error("Failed loading navigation:", err);
+        console.error("Failed loading navigation or languages:", err);
         setError("Navigation could not be loaded.");
       }
     };
 
-    fetchNavigation();
+    fetchData();
   }, [lang]);
 
   const buildTree = (items: NavigationItem[]): NavigationItem[] => {
     const map: Record<number, NavigationItem> = {};
     const roots: NavigationItem[] = [];
 
-    // clone items and prepare children arrays
     items.forEach((item) => {
       map[item.id] = { ...item, children: [] };
     });
 
-    // assign children to parents or promote to roots
     items.forEach((item) => {
       if (item.parent_id && map[item.parent_id]) {
         map[item.parent_id].children!.push(map[item.id]);
@@ -61,21 +81,8 @@ export default function Menu({ lang }: { lang: string }) {
     return roots;
   };
 
-  const buildHref = (item: NavigationItem) => {
-    // 1) If URL is set in Directus, always use it
-    if (item.url) return item.url;
-
-    // 2) If slug is empty or "home", go to language root: /en, /de, /uk
-    if (!item.slug || item.slug === "home") {
-      return `/${item.language_code}`;
-    }
-
-    // 3) Normal case: /en/consulting, /en/services, etc.
-    return `/${item.language_code}/${item.slug}`;
-  };
-
   const renderItem = (item: NavigationItem) => {
-    const href = buildHref(item);
+    const href = item.url ?? `/${item.language_code}/${item.slug}`;
 
     return (
       <li key={item.id} className="relative group">
@@ -86,10 +93,12 @@ export default function Menu({ lang }: { lang: string }) {
         </Link>
 
         {item.children && item.children.length > 0 && (
-          <ul className="absolute left-0 -mt-1 bg-white text-gray-800 shadow-lg rounded-md opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto">
+          <ul className="absolute left-0 -mt-1 bg-white text-gray-800 shadow-lg rounded-md opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto z-50">
             {item.children.map((child) => (
               <li key={child.id}>
-                <Link href={buildHref(child)}>
+                <Link
+                  href={child.url ?? `/${child.language_code}/${child.slug}`}
+                >
                   <span className="px-4 py-2 block hover:bg-nicepage-primary hover:text-brand-menu cursor-pointer transition">
                     {child.title}
                   </span>
@@ -102,16 +111,59 @@ export default function Menu({ lang }: { lang: string }) {
     );
   };
 
+  const handleLanguageChange = (targetCode: string) => {
+    // current slug (if we are on /[lang]/[slug])
+    const slug = router.query.slug as string | undefined;
+
+    if (slug) {
+      // Service / detail page: keep same slug, switch lang
+      router.push(`/${targetCode}/${slug}`);
+    } else {
+      // Home page: default language at "/"
+      if (targetCode === "en") {
+        router.push("/");
+      } else {
+        router.push(`/${targetCode}`);
+      }
+    }
+  };
+
   return (
     <nav className="bg-brand-menu text-nicepage-primary font-medium shadow">
       <div className="max-w-max mx-auto px-4 sm:px-6 lg:px-8">
-        <ul className="flex space-x-4 py-3">
-          {error ? (
-            <li className="text-red-500">{error}</li>
-          ) : (
-            navigation.map(renderItem)
-          )}
-        </ul>
+        <div className="flex items-center justify-between py-3">
+          {/* Left: navigation items */}
+          <ul className="flex space-x-4">
+            {error ? (
+              <li className="text-red-500">{error}</li>
+            ) : (
+              navigation.map(renderItem)
+            )}
+          </ul>
+
+          {/* Right: language selector */}
+          <div className="flex items-center space-x-1">
+            {languages.map((lng) => (
+              <button
+                key={lng.id}
+                type="button"
+                onClick={() => handleLanguageChange(lng.language_code)}
+                className={`flex items-center px-2 py-1 rounded text-sm transition ${
+                  lng.language_code === lang
+                    ? "bg-slate-100 text-slate-900"
+                    : "text-slate-100 hover:bg-slate-700"
+                }`}
+              >
+                {lng.flag_emoji && (
+                  <span className="mr-1 text-lg leading-none">
+                    {lng.flag_emoji}
+                  </span>
+                )}
+                <span>{lng.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     </nav>
   );

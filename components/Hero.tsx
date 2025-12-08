@@ -49,7 +49,7 @@ export default function Hero() {
 
   return (
     <section
-      className="text-white py-32 px-6 text-center"
+      className="text-white px-6 text-center"
       style={{
         backgroundImage: backgroundImageUrl ? `url(${backgroundImageUrl})` : undefined,
         backgroundSize: "cover",

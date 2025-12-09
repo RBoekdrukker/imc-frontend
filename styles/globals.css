@@ -8,13 +8,16 @@
   }
 }
 
-/* Restore list styling only inside article content */
-.article-content ul {
-  list-style: disc !important;
-  margin-left: 1.5rem;
-}
+@layer utilities {
+  /* Restore list styling only inside article content */
+  .article-content ul {
+    list-style-type: disc;
+    margin-left: 1.5rem;
+  }
 
-.article-content ol {
-  list-style: decimal !important;
-  margin-left: 1.5rem;
+  .article-content ol {
+    list-style-type: decimal;
+    margin-left: 1.5rem;
+  }
+
 }

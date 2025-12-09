@@ -125,7 +125,7 @@ export default function ServiceDetailPage({ lang }: ServiceDetailPageProps) {
 
           {/* Body (rich text from Directus) */}
             {article.body && (
-              <div
+              <div id="debug_me"
                 className="text-slate-900 text-base leading-relaxed space-y-4"
                 dangerouslySetInnerHTML={{ __html: article.body }}
               />

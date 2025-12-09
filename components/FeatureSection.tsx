@@ -71,7 +71,7 @@ export default function FeatureSection({ lang, slug }: FeatureSectionProps) {
             {feature.title}
           </h2>
           {feature.description && (
-            <div className="article-content max-w-xl text-base leading-relaxed text-slate-200">
+            <div id="debug_me" className="article-content max-w-xl text-base leading-relaxed text-slate-200">
               {feature.description}
             </div>
           )}

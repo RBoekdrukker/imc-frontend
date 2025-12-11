@@ -9,23 +9,17 @@ const SUPPORTED_LANGS = ["en", "de", "uk"];
 export default function App({ Component, pageProps }) {
   const router = useRouter();
 
-  // 1) Try to get lang from dynamic route param: /[lang]/...
-  const rawLang = router.query.lang;
-  let lang = "en";
+  // Example paths:
+  // "/"                   -> firstSegment = ""
+  // "/de/kontaktaufnahme" -> firstSegment = "de"
+  // "/uk/kontakt"         -> firstSegment = "uk"
+  // "/en/contact"         -> firstSegment = "en"
+  const path = router.asPath.split("?")[0]; // strip query string
+  const firstSegment = path.split("/")[1];  // '' or 'de' or 'uk' or 'en'
 
-  if (typeof rawLang === "string" && SUPPORTED_LANGS.includes(rawLang)) {
-    lang = rawLang;
-  } else if (Array.isArray(rawLang) && SUPPORTED_LANGS.includes(rawLang[0])) {
-    lang = rawLang[0];
-  } else {
-    // 2) Fallback: infer from first URL segment, e.g. /de/... or /uk/...
-    const path = router.asPath.split("?")[0]; // strip query
-    const firstSegment = path.split("/")[1]; // '' | 'de' | 'uk' | 'en' | ...
-
-    if (SUPPORTED_LANGS.includes(firstSegment)) {
-      lang = firstSegment;
-    }
-  }
+  const lang = SUPPORTED_LANGS.includes(firstSegment)
+    ? firstSegment
+    : "en";
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800">

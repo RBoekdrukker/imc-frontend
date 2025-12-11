@@ -12,19 +12,29 @@ interface HeroData {
   } | null;
 }
 
-export default function Hero() {
+interface HeroProps {
+  lang?: string;
+}
+
+export default function Hero({ lang = "en" }: HeroProps) {
   const [hero, setHero] = useState<HeroData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchHero = async () => {
       try {
-        const data = await directusFetch("items/hero_section", {
+        const res = await directusFetch("items/hero_section", {
+          "filter[language_code][_eq]": lang,
+          "filter[published][_eq]": "true",
           fields: "title,subtitle,background_image.id",
+          limit: 1,
         });
 
-        const record = data?.data ?? null;
-        setHero(record);
+        // hero_section is no longer a singleton → res.data is an ARRAY
+        const records = res?.data ?? [];
+        const record = Array.isArray(records) ? records[0] : records;
+
+        setHero(record || null);
         setError(null);
       } catch (err) {
         console.error("Failed loading hero section:", err);
@@ -33,7 +43,7 @@ export default function Hero() {
     };
 
     fetchHero();
-  }, []);
+  }, [lang]);
 
   if (error) {
     return <div className="text-red-600 text-center mt-4">{error}</div>;

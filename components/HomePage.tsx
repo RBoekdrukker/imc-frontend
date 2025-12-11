@@ -15,7 +15,7 @@ export default function HomePage({ lang = "en" }: HomePageProps) {
     <>
       {/* Hero section */}
       <Section>
-        <Hero />
+        <Hero lang={lang} />
       </Section>
 
       {/* Services / features grid */}

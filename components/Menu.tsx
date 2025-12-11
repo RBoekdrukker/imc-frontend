@@ -21,6 +21,13 @@ interface Language {
   flag_emoji?: string;
 }
 
+// Local mapping from language_code -> SVG in /public/flags
+const FLAG_MAP: Record<string, string> = {
+  en: "/flags/en.svg",
+  de: "/flags/de.svg",
+  ua: "/flags/ua.svg",
+};
+
 export default function Menu({ lang }: { lang: string }) {
   const [navigation, setNavigation] = useState<NavigationItem[]>([]);
   const [languages, setLanguages] = useState<Language[]>([]);
@@ -132,7 +139,13 @@ export default function Menu({ lang }: { lang: string }) {
 
   const currentLang =
     languages.find((l) => l.language_code === lang) ||
-    languages[0] || { label: lang.toUpperCase(), flag_emoji: "" };
+    languages[0] || {
+      language_code: lang,
+      label: lang.toUpperCase(),
+      flag_emoji: "",
+    };
+
+  const currentFlagSrc = FLAG_MAP[currentLang.language_code];
 
   return (
     <nav className="bg-brand-menu text-nicepage-primary font-medium shadow">
@@ -154,36 +167,54 @@ export default function Menu({ lang }: { lang: string }) {
               onClick={() => setLangOpen((open) => !open)}
               className="flex items-center px-3 py-1.5 rounded bg-slate-800/60 hover:bg-slate-700 text-sm text-slate-50 transition"
             >
-              {currentLang.flag_emoji && (
+              {currentFlagSrc ? (
+                <img
+                  src={currentFlagSrc}
+                  alt={currentLang.label}
+                  className="mr-2 w-5 h-4 rounded-sm object-cover"
+                />
+              ) : currentLang.flag_emoji ? (
                 <span className="mr-1 text-lg leading-none">
                   {currentLang.flag_emoji}
                 </span>
-              )}
+              ) : null}
+
               <span className="mr-1">{currentLang.label}</span>
               <span className="text-xs opacity-80">▾</span>
             </button>
 
             {langOpen && (
               <div className="absolute right-0 mt-2 w-40 bg-white text-slate-800 rounded-md shadow-lg py-1 z-50">
-                {languages.map((lng) => (
-                  <button
-                    key={lng.id}
-                    type="button"
-                    onClick={() => handleLanguageChange(lng.language_code)}
-                    className={`w-full flex items-center px-3 py-1.5 text-sm text-left hover:bg-slate-100 transition ${
-                      lng.language_code === lang
-                        ? "font-semibold text-slate-900"
-                        : "text-slate-700"
-                    }`}
-                  >
-                    {lng.flag_emoji && (
-                      <span className="mr-2 text-lg leading-none">
-                        {lng.flag_emoji}
-                      </span>
-                    )}
-                    <span>{lng.label}</span>
-                  </button>
-                ))}
+                {languages.map((lng) => {
+                  const flagSrc = FLAG_MAP[lng.language_code];
+
+                  return (
+                    <button
+                      key={lng.id}
+                      type="button"
+                      onClick={() => handleLanguageChange(lng.language_code)}
+                      className={`w-full flex items-center px-3 py-1.5 text-sm text-left hover:bg-slate-100 transition ${
+                        lng.language_code === lang
+                          ? "font-semibold text-slate-900"
+                          : "text-slate-700"
+                      }`}
+                    >
+                      {flagSrc ? (
+                        <img
+                          src={flagSrc}
+                          alt={lng.label}
+                          className="mr-2 w-5 h-4 rounded-sm object-cover"
+                        />
+                      ) : lng.flag_emoji ? (
+                        <span className="mr-2 text-lg leading-none">
+                          {lng.flag_emoji}
+                        </span>
+                      ) : null}
+
+                      <span>{lng.label}</span>
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>

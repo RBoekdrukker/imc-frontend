@@ -5,7 +5,7 @@ import { directusFetch } from "../lib/directus";
 interface CtaData {
   title: string;
   subtitle?: string;
-  button_label?: string;
+  button_text?: string;
   button_url?: string;
 }
 
@@ -58,12 +58,12 @@ export default function CallToAction({ lang = "en" }: CallToActionProps) {
         </p>
       )}
 
-      {cta.button_label && cta.button_url && (
+      {cta.button_text && cta.button_url && (
         <a
           href={cta.button_url}
           className="inline-block bg-brand-primary text-white px-6 py-3 rounded-md font-medium hover:bg-brand-primary-light transition"
         >
-          {cta.button_label}
+          {cta.button_text}
         </a>
       )}
     </section>

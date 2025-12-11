@@ -46,7 +46,7 @@ const translations: Record<
   en: {
     pageTitle: "Contact us",
     intro:
-      "Contact us for real professional guidance from senior experienced specialists.",
+      "Contact us for professional guidance from senior, internationally experienced consultants.",
     nameLabel: "Your name",
     emailLabel: "Email address",
     companyLabel: "Company (optional)",
@@ -63,7 +63,7 @@ const translations: Record<
   de: {
     pageTitle: "Kontakt",
     intro:
-      "Setzen Sie sich mit unseren erfahrenen ExpertInnen für eine unverbindliche Beratung in Verbindung.",
+      "Setzen Sie sich mit uns für eine unverbindliche Erstabklärung in Verbindung.",
     nameLabel: "Ihr Name",
     emailLabel: "E-Mail-Adresse",
     companyLabel: "Unternehmen (optional)",
@@ -97,6 +97,7 @@ const translations: Record<
       "Будь ласка, заповніть усі обов’язкові поля та підтвердіть згоду.",
   },
 };
+
 
 export default function ContactPage({ lang }: ContactPageProps) {
   const t = translations[lang] ?? translations.en;

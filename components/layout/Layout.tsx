@@ -1,14 +1,13 @@
 // components/layout/Layout.tsx
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 
 interface LayoutProps {
   children: ReactNode;
-  lang?: string;
+  lang?: string; // available if you ever want it, but optional
 }
 
 export default function Layout({ children }: LayoutProps) {
   // Currently just a transparent wrapper.
-  // We're handling Menu + Footer in _app.js.
-  <Menu lang={lang} />
+  // Menu + Footer are handled in _app.tsx.
   return <>{children}</>;
 }

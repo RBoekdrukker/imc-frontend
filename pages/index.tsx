@@ -1,27 +1,11 @@
 // pages/index.tsx
-import Hero from "../components/Hero";
-import Section from "../components/Section";
-import HomeSections from "../components/HomeSections";
-import CallToAction from "../components/CallToAction";
+import Layout from "../components/layout/Layout";
+import HomePage from "../components/HomePage";
 
-interface HomePageProps {
-  lang?: string; // comes from _app.js
-}
-
-export default function HomePage({ lang = "en" }: HomePageProps) {
+export default function IndexPage() {
   return (
-    <>
-      <Section>
-        <Hero />
-      </Section>
-
-      <Section className="py-16 md:py-20">
-        <HomeSections lang={lang} />
-      </Section>
-
-      <Section>
-        <CallToAction />
-      </Section>
-    </>
+    <Layout lang="en">
+      <HomePage lang="en" />
+    </Layout>
   );
 }

@@ -40,7 +40,7 @@ export default async function handler(
       email,
       company: company || null,
       message,
-      consent_given: true,
+      consent: true, // was consent_given
     };
 
     const response = await fetch(

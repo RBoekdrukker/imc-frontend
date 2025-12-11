@@ -20,4 +20,9 @@
     margin-left: 1.5rem;
   }
 
+  input, textarea {
+    @apply text-slate-800 placeholder-slate-400;
+  }
+
+
 }

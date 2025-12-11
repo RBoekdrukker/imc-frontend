@@ -26,6 +26,7 @@ const FLAG_MAP: Record<string, string> = {
   en: "/flags/en.svg",
   de: "/flags/de.svg",
   ua: "/flags/ua.svg",
+  uk: "flags/uk.svg", // handle "uk" code from Directus / URLs
 };
 
 export default function Menu({ lang }: { lang: string }) {

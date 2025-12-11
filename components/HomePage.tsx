@@ -25,7 +25,7 @@ export default function HomePage({ lang = "en" }: HomePageProps) {
 
       {/* Call-to-action section */}
       <Section>
-        <CallToAction />
+        <CallToAction lang={lang} />
       </Section>
     </>
   );

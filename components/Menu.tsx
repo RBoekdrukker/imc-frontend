@@ -24,6 +24,7 @@ interface Language {
 // Local mapping from language_code -> SVG in /public/flags
 const FLAG_MAP: Record<string, string> = {
   en: "/flags/en.svg",
+  gb: "/flags/en.svg", // handle "gb" code from Directus / URLs
   de: "/flags/de.svg",
   ua: "/flags/ua.svg",
   uk: "flags/uk.svg", // handle "uk" code from Directus / URLs

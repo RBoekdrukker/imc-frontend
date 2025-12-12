@@ -4,6 +4,7 @@
 
 @layer base {
   html, body {
+    font-family:Georgia;
     @apply bg-brand-primary text-gray-100;
   }
 }

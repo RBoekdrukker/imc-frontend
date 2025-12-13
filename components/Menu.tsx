@@ -132,13 +132,15 @@ export default function Menu({ lang }: { lang: string }) {
         </Link>
 
         {item.children && item.children.length > 0 && (
-          <ul className="absolute left-0 -mt-1 bg-white text-gray-800 shadow-lg rounded-md opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto z-50">
+          <ul className="absolute left-0 -mt-1 bg-white text-gray-800 shadow-lg rounded-md z-50
+               opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto
+               min-w-[220px]">
             {item.children.map((child) => (
               <li key={child.id}>
                 <Link
                   href={child.url ?? `/${child.language_code}/${child.slug}`}
                 >
-                  <span className="px-4 py-2 block hover:bg-nicepage-primary hover:text-brand-menu cursor-pointer transition">
+                  <span className="px-4 py-2 block whitespace-nowrap hover:bg-nicepage-primary hover:text-brand-menu cursor-pointer transition">
                     {child.title}
                   </span>
                 </Link>
@@ -195,7 +197,7 @@ export default function Menu({ lang }: { lang: string }) {
           <div
   		ref={langRef}
   		className="relative"
-  		onMouseLeave={() => setLangOpen(false)} // optional, but feels nice
+  		// onMouseLeave={() => setLangOpen(false)} --> optional, but feels nice
 	  >
 
             <button

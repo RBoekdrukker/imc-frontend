@@ -185,7 +185,9 @@ export default function Menu({ lang }: { lang: string }) {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
  	 <div className="flex items-center justify-between py-3">
           {/* Left: navigation items */}
-          <ul className="flex items-center gap-2 sm:gap-4">
+          <ul className="flex items-center gap-2 sm:gap-4"
+          onMouseEnter={() => setLangOpen(false)}
+          >
             {error ? (
               <li className="text-red-500">{error}</li>
             ) : (

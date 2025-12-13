@@ -4,13 +4,25 @@
 
 @layer base {
   html, body {
-    font-family:Georgia;
+    font-family: Georgia, "Times New Roman", Times, serif;
     @apply bg-brand-primary text-gray-100;
+  }
+
+  h1, h2, h3 {
+    letter-spacing: -0.015em;
+  }
+
+  p {
+    line-height: 1.65;
   }
 }
 
 @layer utilities {
-  /* Restore list styling only inside article content */
+  .font-ui {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont,
+                 "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
   .article-content ul {
     list-style-type: disc;
     margin-left: 1.5rem;
@@ -24,6 +36,5 @@
   input, textarea {
     @apply text-slate-800 placeholder-slate-400;
   }
-
-
 }
+

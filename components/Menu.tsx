@@ -1,5 +1,6 @@
 // components/Menu.tsx
-import { useEffect, useState } from "react";
+
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { directusFetch } from "../lib/directus";
@@ -35,8 +36,36 @@ export default function Menu({ lang }: { lang: string }) {
   const [languages, setLanguages] = useState<Language[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [langOpen, setLangOpen] = useState(false);
+  const langRef = useRef<HTMLDivElement>(null);
 
   const router = useRouter();
+  
+  useEffect(() => {
+  // Close when navigating to a new route
+  const handleRouteStart = () => setLangOpen(false);
+  router.events.on("routeChangeStart", handleRouteStart);
+
+  // Close on click outside
+  const handleMouseDown = (e: MouseEvent) => {
+    if (!langRef.current) return;
+    if (!langRef.current.contains(e.target as Node)) setLangOpen(false);
+  };
+
+  // Close on Escape
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === "Escape") setLangOpen(false);
+  };
+
+  document.addEventListener("mousedown", handleMouseDown);
+  document.addEventListener("keydown", handleKeyDown);
+
+  return () => {
+    router.events.off("routeChangeStart", handleRouteStart);
+    document.removeEventListener("mousedown", handleMouseDown);
+    document.removeEventListener("keydown", handleKeyDown);
+  };
+}, [router.events]);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -122,22 +151,22 @@ export default function Menu({ lang }: { lang: string }) {
   };
 
   const handleLanguageChange = (targetCode: string) => {
-    const slug = router.query.slug as string | undefined;
-
-    if (slug) {
-      // Service / detail page: keep same slug, switch lang
-      router.push(`/${targetCode}/${slug}`);
-    } else {
-      // Home page
-      if (targetCode === "en") {
-        router.push("/");
-      } else {
-        router.push(`/${targetCode}`);
-      }
-    }
-
+  if (targetCode === lang) {
     setLangOpen(false);
+    return;
+  }
+
+  const slug = router.query.slug as string | undefined;
+
+  if (slug) {
+    router.push(`/${targetCode}/${slug}`);
+  } else {
+    router.push(targetCode === "en" ? "/" : `/${targetCode}`);
+  }
+
+  setLangOpen(false);
   };
+
 
   const currentLang =
     languages.find((l) => l.language_code === lang) ||
@@ -150,11 +179,11 @@ export default function Menu({ lang }: { lang: string }) {
   const currentFlagSrc = FLAG_MAP[currentLang.language_code];
 
   return (
-    <nav className="bg-brand-menu text-nicepage-primary font-medium shadow">
-      <div className="max-w-max mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between py-3">
+    <nav className="bg-brand-menu text-nicepage-primary font-ui font-medium shadow">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+ 	 <div className="flex items-center justify-between py-3">
           {/* Left: navigation items */}
-          <ul className="flex space-x-4">
+          <ul className="flex items-center gap-2 sm:gap-4">
             {error ? (
               <li className="text-red-500">{error}</li>
             ) : (
@@ -163,7 +192,12 @@ export default function Menu({ lang }: { lang: string }) {
           </ul>
 
           {/* Right: language dropdown */}
-          <div className="relative">
+          <div
+  		ref={langRef}
+  		className="relative"
+  		onMouseLeave={() => setLangOpen(false)} // optional, but feels nice
+	  >
+
             <button
               type="button"
               onClick={() => setLangOpen((open) => !open)}

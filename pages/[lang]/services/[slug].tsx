@@ -3,10 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { directusFetch } from "../../../lib/directus";
 
-const DIRECTUS_URL = (process.env.NEXT_PUBLIC_DIRECTUS_URL || "").replace(
-  /\/$/,
-  ""
-);
+const DIRECTUS_URL = (process.env.NEXT_PUBLIC_DIRECTUS_URL || "").replace(/\/$/, "");
 
 interface Article {
   article_id: number;
@@ -28,7 +25,7 @@ function getAssetUrl(file: { id: string } | string | null | undefined) {
 }
 
 interface ServiceDetailPageProps {
-  lang: string; // passed down from _app.js
+  lang: string;
 }
 
 export default function ServiceDetailPage({ lang }: ServiceDetailPageProps) {
@@ -49,9 +46,7 @@ export default function ServiceDetailPage({ lang }: ServiceDetailPageProps) {
         setError(null);
 
         const response = await directusFetch(
-          `items/articles?filter[slug][_eq]=${encodeURIComponent(
-            slugValue
-          )}&filter[language_code][_eq]=${encodeURIComponent(
+          `items/articles?filter[slug][_eq]=${encodeURIComponent(slugValue)}&filter[language_code][_eq]=${encodeURIComponent(
             lang
           )}&filter[published][_eq]=true&limit=1&fields=*.*`
         );
@@ -59,10 +54,7 @@ export default function ServiceDetailPage({ lang }: ServiceDetailPageProps) {
         const items = ((response as any)?.data || []) as Article[];
         const item = items[0] || null;
 
-        if (!item) {
-          setError("Article not found.");
-        }
-
+        if (!item) setError("Article not found.");
         setArticle(item);
       } catch (err) {
         console.error("Error loading service detail article:", err);
@@ -75,63 +67,78 @@ export default function ServiceDetailPage({ lang }: ServiceDetailPageProps) {
     fetchArticle();
   }, [slug, lang]);
 
+  const heroUrl = getAssetUrl(article?.hero_image);
+
+  // Shared layout wrapper (matches your other pages)
   if (loading) {
     return (
-      <div className="py-16">
-        <div className="mx-auto max-w-4xl px-4 text-slate-200">
-          Loading service details…
-        </div>
-      </div>
+      <main className="flex-1">
+      <section className="bg-transparent text-white py-10 md:py-14">
+      <div className="mx-auto max-w-5xl px-4 md:px-8 text-slate-200">Loading service details…</div>
+      </section>
+      </main>
     );
   }
 
   if (error || !article) {
     return (
-      <div className="py-16">
-        <div className="mx-auto max-w-4xl px-4 text-slate-200">
-          {error || "This page could not be found."}
-        </div>
-      </div>
+      <main className="flex-1">
+      <section className="bg-transparent text-white py-10 md:py-14">
+      <div className="mx-auto max-w-5xl px-4 md:px-8 text-slate-200">{error || "This page could not be found."}</div>
+      </section>
+      </main>
     );
   }
 
-  const heroUrl = getAssetUrl(article.hero_image);
-
   return (
-    <article className="py-16">
-      <div className="mx-auto max-w-4xl px-4 md:px-0 bg-white rounded-2xl shadow-sm">
-        {/* Hero image */}
-        {heroUrl && (
-          <div className="overflow-hidden rounded-t-2xl">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={heroUrl}
-              alt={article.title}
-              className="h-64 w-full object-cover"
-            />
-          </div>
-        )}
-
-        <div className="px-6 pb-10 pt-8 md:px-10">
-          {/* Title */}
-          <h1 className="mb-3 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
-            {article.title}
-          </h1>
-
-          {/* Intro */}
-          {article.intro && (
-            <p className="mb-6 text-base text-slate-600">{article.intro}</p>
-          )}
-
-          {/* Body (rich text from Directus) */}
-            {article.body && (
-              <div id="debug_me"
-                className="article-content text-slate-900 text-base leading-relaxed space-y-4"
-                dangerouslySetInnerHTML={{ __html: article.body }}
-              />
-           )}
-        </div>
+    <main className="flex-1">
+    {/* page spacing aligned with your other sections */}
+    <section className="bg-transparent text-white py-10 md:py-14">
+    <div className="mx-auto max-w-5xl px-4 md:px-8">
+    <article className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-200 overflow-hidden">
+    {/* Hero image (separate field, not part of WYSIWYG) */}
+    {heroUrl && (
+      <div className="h-56 md:h-72 w-full overflow-hidden">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={heroUrl} alt={article.title} className="h-full w-full object-cover" />
       </div>
+    )}
+
+    <div className="px-6 py-8 md:px-10 md:py-10">
+    {/* Title */}
+    <h1 className="mb-2 text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
+    {article.title}
+    </h1>
+
+    {/* Intro */}
+    {article.intro && (
+      <p className="mb-8 text-base md:text-lg text-slate-600">
+      {article.intro}
+      </p>
+    )}
+
+    {/* Body (WYSIWYG HTML) */}
+    {article.body && (
+      <div
+      className="
+      prose prose-slate max-w-none
+      prose-headings:text-slate-900
+      prose-h2:text-2xl prose-h2:font-bold prose-h2:text-brand-primary prose-h2:mt-10
+      prose-h3:text-lg  prose-h3:font-semibold prose-h3:text-brand-primary prose-h3:mt-8
+      prose-p:leading-relaxed
+      prose-ul:my-4 prose-ul:space-y-2
+      prose-ol:my-4 prose-ol:space-y-2
+      prose-li:my-0
+      prose-strong:text-slate-900
+      prose-a:text-brand-primary prose-a:no-underline hover:prose-a:underline
+      "
+      dangerouslySetInnerHTML={{ __html: article.body }}
+      />
+    )}
+    </div>
     </article>
+    </div>
+    </section>
+    </main>
   );
 }

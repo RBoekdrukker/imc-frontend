@@ -79,7 +79,7 @@ export default function HomeSections({ lang }: HomeSectionsProps) {
             )}
 
             <div className="flex flex-1 flex-col p-6">
-              <h3 className="mb-3 text-x1 font-bold text-center text-[#369]">
+              <h3 className="text-brand-primary mb-3 font-bold text-center">
                 {section.title}
               </h3>
 

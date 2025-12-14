@@ -112,7 +112,7 @@ export default function ContentBlocks({ lang, slug }: ContentBlocksProps) {
                 )}
 
                 {/* Title */}
-                <h3 className="text-brand-primary mb-2 font-semibold">
+                <h3 className="text-brand-primary text-center mb-2 font-semibold">
                   {block.title}
                 </h3>
 

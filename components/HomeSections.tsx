@@ -79,14 +79,14 @@ export default function HomeSections({ lang }: HomeSectionsProps) {
             )}
 
             <div className="flex flex-1 flex-col p-6">
-              <h3 className="mb-3 text-lg font-bold text-center text-slate-900">
+              <h3 className="mb-3 text-x1 font-bold text-center text-[#369]">
                 {section.title}
               </h3>
 
               {/* Body as HTML (WYSIWYG) */}
               {section.body && (
                 <div
-                  className="prose prose-sm max-w-none text-justify text-gray-900 prose-p:my-0 prose-p:text-gray-900"
+                  className="prose prose-sm max-w-none text-gray-900 prose-p:my-0 prose-p:text-gray-900"
                   dangerouslySetInnerHTML={{ __html: section.body }}
                 />
               )}

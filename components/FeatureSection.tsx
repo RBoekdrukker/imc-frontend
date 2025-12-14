@@ -64,14 +64,14 @@ export default function FeatureSection({ lang, slug }: FeatureSectionProps) {
   const bgUrl = getAssetUrl(feature.background_image);
 
   return (
-    <section className="bg-slate-900 py-20">
+    <section className="py-20">
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-10 px-4 md:flex-row">
         <div className="flex-1 text-center md:text-left">
           <h2 className="mb-4 text-3xl font-bold tracking-tight text-white md:text-4xl">
             {feature.title}
           </h2>
           {feature.description && (
-            <div id="debug_me" className="article-content max-w-xl text-base leading-relaxed text-slate-200">
+            <div className="article-content max-w-xl text-base leading-relaxed text-slate-200">
               {feature.description}
             </div>
           )}

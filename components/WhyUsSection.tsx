@@ -61,7 +61,7 @@ export default function WhyUsSection({ lang, slug }: WhyUsSectionProps) {
 
         {data.intro_text && (
           <div
-            className="mx-auto max-w-3xl text-base leading-relaxed text-slate-700"
+            className="mx-auto prose prose-sm max-w-none text-gray-900 prose-p:my-0 prose-p:text-gray-900"
             // intro_text contains HTML from Directus
             dangerouslySetInnerHTML={{ __html: data.intro_text }}
           />

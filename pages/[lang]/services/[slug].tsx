@@ -121,11 +121,13 @@ export default function ServiceDetailPage({ lang }: ServiceDetailPageProps) {
     {article.body && (
       <div
       className="
+      bg-white
+      text-slate-900
       prose prose-slate max-w-none
       prose-headings:text-slate-900
       prose-h2:text-2xl prose-h2:font-bold prose-h2:text-brand-primary prose-h2:mt-10
       prose-h3:text-lg  prose-h3:font-semibold prose-h3:text-brand-primary prose-h3:mt-8
-      prose-p:leading-relaxed prose-p:text-slate-900
+      prose-p:leading-relaxed
       prose-ul:my-4 prose-ul:space-y-2
       prose-ol:my-4 prose-ol:space-y-2
       prose-li:my-0

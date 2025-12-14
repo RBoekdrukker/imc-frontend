@@ -21,7 +21,7 @@ function getAssetUrl(file: { id: string } | string | null | undefined) {
   if (!id) return null;
 
   if (!DIRECTUS_URL) return `/assets/${id}`;
-  return `${DIRECTUS_URL}/assets/${id}`;
+  return `${DIRECTUS_URL}/assets/${id}?width=1600&height=520&fit=cover&quality=80`;
 }
 
 interface ServiceDetailPageProps {
@@ -94,13 +94,13 @@ export default function ServiceDetailPage({ lang }: ServiceDetailPageProps) {
     <main className="flex-1">
     {/* page spacing aligned with your other sections */}
     <section className="bg-transparent text-white py-10 md:py-14">
-    <div className="mx-auto max-w-5xl px-4 md:px-8">
+    <div className="mx-auto max-w-6xl px-4 md:px-8">
     <article className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-200 overflow-hidden">
     {/* Hero image (separate field, not part of WYSIWYG) */}
     {heroUrl && (
       <div className="h-56 md:h-72 w-full overflow-hidden">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={heroUrl} alt={article.title} className="h-full w-full object-cover" />
+      <img src={heroUrl} alt={article.title} className="h-72 w-full object-cover object-center" />
       </div>
     )}
 
@@ -121,7 +121,6 @@ export default function ServiceDetailPage({ lang }: ServiceDetailPageProps) {
     {article.body && (
       <div
       className="
-      bg-white
       text-slate-900
       prose prose-slate max-w-none
       prose-headings:text-slate-900

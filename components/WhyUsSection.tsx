@@ -48,7 +48,7 @@ export default function WhyUsSection({ lang, slug }: WhyUsSectionProps) {
   }
 
   return (
-    <section className="bg-white py-16">
+    <section className="bg-white py-10">
       <div className="mx-auto max-w-5xl px-4">
         <header className="mb-8 text-center">
           <h2 className="mb-2 text-3xl font-bold tracking-tight text-slate-900">

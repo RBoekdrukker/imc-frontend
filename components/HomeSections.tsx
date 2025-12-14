@@ -68,7 +68,7 @@ export default function HomeSections({ lang }: HomeSectionsProps) {
         const imageUrl = getAssetUrl(section.background_image);
 
         const card = (
-          <article className="flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 transition hover:shadow-md">
+          <article className="flex h-full flex-col overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-slate-200 transition hover:shadow-md">
             {imageUrl && (
               // eslint-disable-next-line @next/next/no-img-element
               <img

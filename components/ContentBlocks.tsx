@@ -82,7 +82,7 @@ export default function ContentBlocks({ lang, slug }: ContentBlocksProps) {
   }
 
   return (
-    <section className="bg-slate-50 py-10">
+    <section className="border-t border-slate-100 bg-slate-50 py-10">
       <div className="mx-auto max-w-6xl px-4">
         <div className="grid gap-8 md:grid-cols-3">
           {blocks.map((block) => {
@@ -112,7 +112,7 @@ export default function ContentBlocks({ lang, slug }: ContentBlocksProps) {
                 )}
 
                 {/* Title */}
-                <h3 className="mb-2 text-lg font-semibold text-slate-800">
+                <h3 className="text-brand-align mb-2 font-semibold">
                   {block.title}
                 </h3>
 

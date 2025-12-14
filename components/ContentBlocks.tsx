@@ -119,7 +119,7 @@ export default function ContentBlocks({ lang, slug }: ContentBlocksProps) {
                 {/* Details text (HTML from Directus) */}
                 {block.details && (
                   <div
-                    className="mt-auto text-sm leading-relaxed text-slate-700"
+                    className="prose prose-sm max-w-none text-gray-900 prose-p:my-0 prose-p:text-gray-900"
                     dangerouslySetInnerHTML={{ __html: block.details }}
                   />
                 )}

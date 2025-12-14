@@ -69,12 +69,13 @@ export default function ServiceDetailPage({ lang }: ServiceDetailPageProps) {
 
   const heroUrl = getAssetUrl(article?.hero_image);
 
-  // Shared layout wrapper (matches your other pages)
   if (loading) {
     return (
       <main className="flex-1">
       <section className="bg-transparent text-white py-10 md:py-14">
-      <div className="mx-auto max-w-5xl px-4 md:px-8 text-slate-200">Loading service details…</div>
+      <div className="mx-auto max-w-5xl px-4 md:px-8 text-slate-200">
+      Loading service details…
+      </div>
       </section>
       </main>
     );
@@ -84,7 +85,9 @@ export default function ServiceDetailPage({ lang }: ServiceDetailPageProps) {
     return (
       <main className="flex-1">
       <section className="bg-transparent text-white py-10 md:py-14">
-      <div className="mx-auto max-w-5xl px-4 md:px-8 text-slate-200">{error || "This page could not be found."}</div>
+      <div className="mx-auto max-w-5xl px-4 md:px-8 text-slate-200">
+      {error || "This page could not be found."}
+      </div>
       </section>
       </main>
     );
@@ -92,35 +95,32 @@ export default function ServiceDetailPage({ lang }: ServiceDetailPageProps) {
 
   return (
     <main className="flex-1">
-    {/* page spacing aligned with your other sections */}
     <section className="bg-transparent text-white py-10 md:py-14">
     <div className="mx-auto max-w-6xl px-4 md:px-8">
     <article className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-200 overflow-hidden">
-    {/* Hero image (separate field, not part of WYSIWYG) */}
     {heroUrl && (
       <div className="relative h-72 overflow-hidden">
-      <img className="absolute inset-0 w-full h-full object-cover" />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
-      </div>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={heroUrl} alt={article.title} className="h-72 w-full object-cover object-top" />
+      <img
+      src={heroUrl}
+      alt={article.title}
+      className="absolute inset-0 h-full w-full object-cover object-top"
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
       </div>
     )}
 
     <div className="px-6 py-8 md:px-10 md:py-10">
-    {/* Title */}
     <h1 className="mb-2 text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
     {article.title}
     </h1>
 
-    {/* Intro */}
     {article.intro && (
       <p className="mb-8 text-base md:text-lg text-slate-600">
       {article.intro}
       </p>
     )}
 
-    {/* Body (WYSIWYG HTML) */}
     {article.body && (
       <div
       className="
@@ -128,7 +128,7 @@ export default function ServiceDetailPage({ lang }: ServiceDetailPageProps) {
       prose prose-slate max-w-none
       prose-headings:text-slate-900
       prose-h2:text-2xl prose-h2:font-bold prose-h2:text-brand-primary prose-h2:mt-10
-      prose-h3:text-lg  prose-h3:font-semibold prose-h3:text-brand-primary prose-h3:mt-8
+      prose-h3:text-lg prose-h3:font-semibold prose-h3:text-brand-primary prose-h3:mt-8
       prose-p:leading-relaxed
       prose-ul:my-4 prose-ul:space-y-2
       prose-ol:my-4 prose-ol:space-y-2

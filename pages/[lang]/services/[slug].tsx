@@ -21,7 +21,7 @@ function getAssetUrl(file: { id: string } | string | null | undefined) {
   if (!id) return null;
 
   if (!DIRECTUS_URL) return `/assets/${id}`;
-  return `${DIRECTUS_URL}/assets/${id}?width=1600&height=520&fit=cover&quality=80`;
+  return `${DIRECTUS_URL}/assets/${id}?width=1600&height=600&fit=cover`;
 }
 
 interface ServiceDetailPageProps {
@@ -98,9 +98,12 @@ export default function ServiceDetailPage({ lang }: ServiceDetailPageProps) {
     <article className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-200 overflow-hidden">
     {/* Hero image (separate field, not part of WYSIWYG) */}
     {heroUrl && (
-      <div className="h-56 md:h-72 w-full overflow-hidden">
+      <div className="relative h-72 overflow-hidden">
+      <img className="absolute inset-0 w-full h-full object-cover" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
+      </div>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={heroUrl} alt={article.title} className="h-72 w-full object-cover object-center" />
+      <img src={heroUrl} alt={article.title} className="h-72 w-full object-cover object-top" />
       </div>
     )}
 

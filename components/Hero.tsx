@@ -68,7 +68,7 @@ export default function Hero({ lang = "en" }: HeroProps) {
       }}
     >
       <h1 className="text-5xl font-bold mb-6">{hero.title}</h1>
-      <p className="text-xl max-w-2xl mx-auto">{hero.subtitle}</p>
+      <p className="text-xl text-center mx-auto">{hero.subtitle}</p>
     </section>
   );
 }

@@ -51,7 +51,7 @@ export default function ContentBlocks({ lang, slug }: ContentBlocksProps) {
             slug
           )}&filter[language_code][_eq]=${encodeURIComponent(
             lang
-          )}&filter[published][_eq]=true&sort=content_block_id&limit=6&fields=*.*`
+          )}&filter[published][_eq]=true&sort=sort,content_block_id&limit=6&fields=*.*`
         );
 
         const data = ((response as any)?.data || []) as ContentBlock[];

@@ -123,20 +123,24 @@ export default function ServiceDetailPage({ lang }: ServiceDetailPageProps) {
 
     {article.body && (
       <div
-      className="
-      text-slate-900
-      prose prose-slate max-w-none
-      prose-headings:text-slate-900
-      prose-h2:text-2xl prose-h2:font-bold prose-h2:text-brand-primary prose-h2:mt-10
-      prose-h3:text-lg prose-h3:font-semibold prose-h3:text-brand-primary prose-h3:mt-8
-      prose-p:leading-relaxed
-      prose-ul:my-4 prose-ul:space-y-2
-      prose-ol:my-4 prose-ol:space-y-2
-      prose-li:my-0
-      prose-strong:text-slate-900
-      prose-a:text-brand-primary prose-a:no-underline hover:prose-a:underline
-      "
-      dangerouslySetInnerHTML={{ __html: article.body }}
+        className="
+          text-slate-900
+          prose prose-slate max-w-none
+          prose-headings:text-slate-900
+          prose-h2:text-2xl prose-h2:font-bold prose-h2:text-brand-primary prose-h2:mt-10
+          prose-h3:text-lg prose-h3:font-semibold prose-h3:text-brand-primary prose-h3:mt-8
+          prose-p:leading-relaxed
+
+          prose-ul:list-disc prose-ul:pl-6
+          prose-ol:list-decimal prose-ol:pl-6
+          prose-ul:my-4 prose-ul:space-y-2
+          prose-ol:my-4 prose-ol:space-y-2
+          prose-li:my-0
+
+          prose-strong:text-slate-900
+          prose-a:text-brand-primary prose-a:no-underline hover:prose-a:underline
+          "
+        dangerouslySetInnerHTML={{ __html: article.body }}
       />
     )}
     </div>

@@ -19,6 +19,7 @@
 
   p {
     line-height: 1.65;
+    padding-bottom: 14px;
   }
 
   /* Restore list styling inside CMS content */

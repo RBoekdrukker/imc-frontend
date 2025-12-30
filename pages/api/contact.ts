@@ -8,8 +8,9 @@ process.env.DIRECTUS_URL || process.env.NEXT_PUBLIC_DIRECTUS_URL || "";
 const DIRECTUS_TOKEN = process.env.DIRECTUS_STATIC_TOKEN || "";
 
 // Prefer a non-public env var, but fall back to NEXT_PUBLIC_TENANT_ID if that's what you already use.
-const TENANT_ID =
-Number(process.env.TENANT_ID || process.env.NEXT_PUBLIC_TENANT_ID || 1);
+const TENANT_ID = Number(process.env.NEXT_PUBLIC_TENANT_ID);
+
+// const TENANT_ID = Number(process.env.TENANT_ID || process.env.NEXT_PUBLIC_TENANT_ID || 1);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
   if (req.method !== "POST") {

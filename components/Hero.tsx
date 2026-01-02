@@ -67,8 +67,8 @@ export default function Hero({ lang = "en" }: HeroProps) {
         backgroundColor: "#254463",
       }}
     >
-      <h1 className="text-5xl font-bold mb-6">{hero.title}</h1>
-      <p className="mx-auto max-w-4xl text-center text-lg md:text-xl leading-relaxed text-slate-200">
+      <h1 className="text-5xl text-white font-bold mb-6">{hero.title}</h1>
+      <p className="mx-auto max-w-5xl text-center text-lg md:text-xl leading-relaxed text-slate-200">
         {hero.subtitle}
       </p>
     </section>

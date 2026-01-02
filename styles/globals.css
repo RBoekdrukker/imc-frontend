@@ -8,10 +8,10 @@
     @apply bg-brand-primary text-gray-100;
   }
 
-  h1 { @apply text-4xl font-bold; }
-  h2 { @apply text-3xl font-bold; }
-  h3 { @apply text-2xl font-bold; }
-  h4 { @apply text-xl font-semibold; }
+  h1 { @apply text-4xl font-bold text-brand-primary; }
+  h2 { @apply text-3xl font-bold text-brand-primary; }
+  h3 { @apply text-2xl font-bold text-brand-primary; }
+  h4 { @apply text-xl font-semibold text-brand-primary; }
 
   h1, h2, h3 {
     letter-spacing: -0.015em;

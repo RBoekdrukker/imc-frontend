@@ -27,8 +27,8 @@ const FLAG_MAP: Record<string, string> = {
   en: "/flags/en.svg",
   gb: "/flags/en.svg", // alias
   de: "/flags/de.svg",
-  ua: "/flags/ua.svg",
-  uk: "/flags/ua.svg", // alias
+  uk: "/flags/ua.svg",
+  ua: "/flags/ua.svg", // alias
 };
 
 const DEFAULT_LANG = "en";
@@ -36,7 +36,7 @@ const DEFAULT_LANG = "en";
 // Handle alias codes coming from data/URLs
 const LANG_ALIASES: Record<string, string> = {
   gb: "en",
-  uk: "ua",
+  ua: "uk",
 };
 
 function canonicalLang(code: string) {

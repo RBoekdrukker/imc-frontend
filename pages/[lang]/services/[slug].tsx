@@ -111,7 +111,7 @@ export default function ServiceDetailPage({ lang }: ServiceDetailPageProps) {
     )}
 
     <div className="px-6 py-8 md:px-10 md:py-10">
-    <h1 className="mb-2 text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
+    <h1 className="mb-2 text-3xl md:text-4xl font-bold tracking-tight">
     {article.title}
     </h1>
 

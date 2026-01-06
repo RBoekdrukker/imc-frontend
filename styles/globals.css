@@ -57,6 +57,21 @@
     margin-left: 1.5rem;
   }
 
+  .cta-executive {
+    margin-top: 2.5rem;
+    font-size: 1.10rem;
+    text-align: center;
+    color:#036;
+  }
+  .cta-executive a {
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .cta-executive a:hover {
+    text-decoration: underline;
+  }
+
+
   input, textarea {
     @apply text-slate-800 placeholder-slate-400;
   }

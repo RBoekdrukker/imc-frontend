@@ -38,6 +38,7 @@ const translations: Record<
     messageLabel: string;
     consentLabel: string;
     submitLabel: string;
+    privacyLinkLabel: string;
     successMessage: string;
     errorMessage: string;
     requiredMessage: string;
@@ -53,6 +54,7 @@ const translations: Record<
     messageLabel: "Your message",
     consentLabel:
       "I consent to IMC Consulting processing my personal data for the purpose of handling my inquiry, in accordance with the Privacy Policy.",
+    privacyLinkLabel: "Privacy & data use",
     submitLabel: "Send message",
     successMessage:
       "Thank you for your message. We will get back to you as soon as possible.",
@@ -70,6 +72,7 @@ const translations: Record<
     messageLabel: "Ihre Nachricht",
     consentLabel:
       "Ich willige ein, dass IMC Consulting meine personenbezogenen Daten zum Zweck der Bearbeitung meiner Anfrage gemäß der Datenschutzerklärung verarbeitet.",
+    privacyLinkLabel: "Datenschutz",
     submitLabel: "Nachricht senden",
     successMessage:
       "Vielen Dank für Ihre Nachricht. Wir melden uns so bald wie möglich bei Ihnen.",
@@ -87,7 +90,8 @@ const translations: Record<
     companyLabel: "Компанія (необов’язково)",
     messageLabel: "Ваше повідомлення",
     consentLabel:
-      "Я надаю згоду на обробку моїх персональних даних IMC Consulting з метою опрацювання цього запиту відповідно до Політики конфіденційності.",
+      "Я надаю згоду на обробку моїх персональних даних IMC Consulting з метою опрацювання цього запиту відповідно до",
+    privacyLinkLabel: "Конфіденційність",
     submitLabel: "Надіслати повідомлення",
     successMessage:
       "Дякуємо за Ваше повідомлення. Ми зв’яжемося з Вами якнайшвидше.",
@@ -258,13 +262,13 @@ export default function ContactPage({ lang }: ContactPageProps) {
               >
                 {t.consentLabel}{" "}
                 <a
-                  href="/privacy"
-                  className="underline text-brand-primary hover:text-brand-primary-light"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                href={`/${lang}/services/data_protection`}
+                ...
                 >
-                  Privacy / Datenschutzerklärung
+                {t.privacyLinkLabel}
                 </a>
+                .
+
                 .
               </label>
             </div>

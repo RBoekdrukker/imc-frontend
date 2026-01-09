@@ -53,8 +53,8 @@ const translations: Record<
     companyLabel: "Company (optional)",
     messageLabel: "Your message",
     consentLabel:
-      "I consent to IMC Consulting processing my personal data for the purpose of handling my inquiry, in accordance with the",
-    privacyLinkLabel: "Privacy & data use",
+      "I consent to IMC Consulting processing my personal data for the purpose of handling my inquiry, in accordance with the ",
+    privacyLinkLabel: "privacy & data policy",
     submitLabel: "Send message",
     successMessage:
       "Thank you for your message. We will get back to you as soon as possible.",
@@ -72,7 +72,7 @@ const translations: Record<
     messageLabel: "Ihre Nachricht",
     consentLabel:
       "Ich willige ein, dass IMC Consulting meine personenbezogenen Daten zum Zweck der Bearbeitung meiner Anfrage gemäß der ",
-    privacyLinkLabel: "Datenschutz",
+    privacyLinkLabel: "Datenschutzordnung",
     submitLabel: "Nachricht senden",
     successMessage:
       "Vielen Dank für Ihre Nachricht. Wir melden uns so bald wie möglich bei Ihnen.",
@@ -90,7 +90,7 @@ const translations: Record<
     companyLabel: "Компанія (необов’язково)",
     messageLabel: "Ваше повідомлення",
     consentLabel:
-      "Я надаю згоду на обробку моїх персональних даних IMC Consulting з метою опрацювання цього запиту відповідно до",
+      "Я надаю згоду на обробку моїх персональних даних IMC Consulting з метою опрацювання цього запиту відповідно до ",
     privacyLinkLabel: "Конфіденційність",
     submitLabel: "Надіслати повідомлення",
     successMessage:

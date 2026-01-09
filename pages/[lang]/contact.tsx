@@ -53,7 +53,7 @@ const translations: Record<
     companyLabel: "Company (optional)",
     messageLabel: "Your message",
     consentLabel:
-      "I consent to IMC Consulting processing my personal data for the purpose of handling my inquiry, in accordance with the Privacy Policy.",
+      "I consent to IMC Consulting processing my personal data for the purpose of handling my inquiry, in accordance with the",
     privacyLinkLabel: "Privacy & data use",
     submitLabel: "Send message",
     successMessage:
@@ -71,7 +71,7 @@ const translations: Record<
     companyLabel: "Unternehmen (optional)",
     messageLabel: "Ihre Nachricht",
     consentLabel:
-      "Ich willige ein, dass IMC Consulting meine personenbezogenen Daten zum Zweck der Bearbeitung meiner Anfrage gemäß der Datenschutzerklärung verarbeitet.",
+      "Ich willige ein, dass IMC Consulting meine personenbezogenen Daten zum Zweck der Bearbeitung meiner Anfrage gemäß der ",
     privacyLinkLabel: "Datenschutz",
     submitLabel: "Nachricht senden",
     successMessage:
@@ -257,20 +257,21 @@ export default function ContactPage({ lang }: ContactPageProps) {
                 className="mt-1 h-4 w-4 rounded border-slate-300 text-brand-primary focus:ring-brand-primary"
               />
               <label
-                htmlFor="consent"
-                className="text-xs text-slate-600 leading-relaxed"
+              htmlFor="consent"
+              className="text-xs text-slate-600 leading-relaxed"
               >
-                {t.consentLabel}{" "}
-                <a
-                href={`/${lang}/services/data_protection`}
-                ...
-                >
-                {t.privacyLinkLabel}
-                </a>
-                .
-
-                .
+              {t.consentLabel}{" "}
+              <a
+              href={`/${lang}/services/data_protection`}
+              className="underline text-brand-primary hover:text-brand-primary-light"
+              target="_blank"
+              rel="noopener noreferrer"
+              >
+              {t.privacyLinkLabel}
+              </a>
+              .
               </label>
+
             </div>
 
             {error && (
